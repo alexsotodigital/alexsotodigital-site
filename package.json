@@ -1,0 +1,13 @@
+{
+  "name": "alex-soto-knowledge-base",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Static knowledge-base website for Alex Soto.",
+  "scripts": {
+    "build": "node scripts/build.js",
+    "preview": "npm run build && python3 -m http.server 4173 -d dist",
+    "dev": "npm run preview",
+    "deploy:preview": "npm run build",
+    "publish:ipfs": "npm run build && sh scripts/publish-ipfs.sh"
+  }
+}
