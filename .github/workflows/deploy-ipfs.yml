@@ -103,15 +103,18 @@ jobs:
               fs.appendFileSync(outputPath, `cid=${cid}\n`);
             } catch (error) {
               if (error.response && error.response.body) {
-                console.error("Pinata upload failed:", JSON.stringify(error.response.body));
+                console.error(`::error::Pinata upload failed: ${JSON.stringify(error.response.body)}`);
               } else {
-                console.error("Pinata upload failed:", error.message);
+                console.error(`::error::Pinata upload failed: ${error.message}`);
               }
               process.exit(1);
             }
           }
 
-          main();
+          main().catch((error) => {
+            console.error(`::error::${error.message}`);
+            process.exit(1);
+          });
           NODE
 
           node /tmp/upload-to-pinata.js
