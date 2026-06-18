@@ -39,7 +39,6 @@ jobs:
           const fs = require("fs");
           const path = require("path");
           const FormData = require("form-data");
-          const recursive = require("recursive-fs");
           const got = require("got");
 
           const distDir = path.resolve(process.cwd(), "dist");
@@ -47,24 +46,35 @@ jobs:
           const name = `alexsotodigital-site-${process.env.GITHUB_SHA}`;
           const outputPath = process.env.GITHUB_OUTPUT;
 
-          if (!token) {
-            throw new Error("PINATA_JWT secret is not configured.");
+          async function readFiles(dir) {
+            const entries = await fs.promises.readdir(dir, { withFileTypes: true });
+            const files = await Promise.all(entries.map((entry) => {
+              const entryPath = path.join(dir, entry.name);
+              return entry.isDirectory() ? readFiles(entryPath) : entryPath;
+            }));
+            return files.flat();
           }
 
-          if (!fs.existsSync(distDir)) {
-            throw new Error("dist/ does not exist. Run npm run build before uploading.");
-          }
-
-          recursive.readdirr(distDir, async (err, dirs, files) => {
-            if (err) {
-              throw err;
+          async function main() {
+            if (!token) {
+              throw new Error("PINATA_JWT secret is not configured or is not available to this workflow.");
             }
 
+            if (token.split(".").length !== 3) {
+              throw new Error("PINATA_JWT is present but does not look like a valid JWT.");
+            }
+
+            if (!fs.existsSync(distDir)) {
+              throw new Error("dist/ does not exist. Run npm run build before uploading.");
+            }
+
+            const files = await readFiles(distDir);
             if (!files.length) {
               throw new Error("dist/ is empty.");
             }
 
             const formData = new FormData();
+            console.log(`Uploading ${files.length} files to Pinata.`);
 
             files.forEach((file) => {
               formData.append("file", fs.createReadStream(file), {
@@ -99,7 +109,9 @@ jobs:
               }
               process.exit(1);
             }
-          });
+          }
+
+          main();
           NODE
 
           node /tmp/upload-to-pinata.js
