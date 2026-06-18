@@ -35,7 +35,7 @@ jobs:
       - name: Upload dist to Pinata
         id: upload
         run: |
-          cat > /tmp/upload-to-pinata.js <<'NODE'
+          cat > .pinata-upload.cjs <<'NODE'
           const fs = require("fs");
           const path = require("path");
           const FormData = require("form-data");
@@ -117,7 +117,7 @@ jobs:
           });
           NODE
 
-          node /tmp/upload-to-pinata.js
+          node .pinata-upload.cjs
 
       - name: Add deployment summary
         run: |
