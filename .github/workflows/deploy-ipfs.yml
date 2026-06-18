@@ -1,0 +1,121 @@
+name: Deploy static site to IPFS
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Build and upload to Pinata
+    runs-on: ubuntu-latest
+    env:
+      SITE_URL: https://alexsotodigital.eth.limo
+      PINATA_JWT: ${{ secrets.PINATA_JWT }}
+
+    outputs:
+      cid: ${{ steps.upload.outputs.cid }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Build static site
+        run: npm run build
+
+      - name: Install upload helpers
+        run: npm install --no-save form-data recursive-fs base-path-converter got@11
+
+      - name: Upload dist to Pinata
+        id: upload
+        run: |
+          cat > /tmp/upload-to-pinata.js <<'NODE'
+          const fs = require("fs");
+          const path = require("path");
+          const FormData = require("form-data");
+          const recursive = require("recursive-fs");
+          const got = require("got");
+
+          const distDir = path.resolve(process.cwd(), "dist");
+          const token = process.env.PINATA_JWT;
+          const name = `alexsotodigital-site-${process.env.GITHUB_SHA}`;
+          const outputPath = process.env.GITHUB_OUTPUT;
+
+          if (!token) {
+            throw new Error("PINATA_JWT secret is not configured.");
+          }
+
+          if (!fs.existsSync(distDir)) {
+            throw new Error("dist/ does not exist. Run npm run build before uploading.");
+          }
+
+          recursive.readdirr(distDir, async (err, dirs, files) => {
+            if (err) {
+              throw err;
+            }
+
+            if (!files.length) {
+              throw new Error("dist/ is empty.");
+            }
+
+            const formData = new FormData();
+
+            files.forEach((file) => {
+              formData.append("file", fs.createReadStream(file), {
+                filepath: path.relative(distDir, file),
+              });
+            });
+
+            formData.append("pinataOptions", JSON.stringify({ cidVersion: 1 }));
+            formData.append("pinataMetadata", JSON.stringify({ name }));
+
+            try {
+              const response = await got.post("https://api.pinata.cloud/pinning/pinFileToIPFS", {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+                body: formData,
+                responseType: "json",
+              });
+
+              const cid = response.body && response.body.IpfsHash;
+              if (!cid) {
+                throw new Error(`Pinata response did not include IpfsHash: ${JSON.stringify(response.body)}`);
+              }
+
+              console.log(`IpfsHash=${cid}`);
+              fs.appendFileSync(outputPath, `cid=${cid}\n`);
+            } catch (error) {
+              if (error.response && error.response.body) {
+                console.error("Pinata upload failed:", JSON.stringify(error.response.body));
+              } else {
+                console.error("Pinata upload failed:", error.message);
+              }
+              process.exit(1);
+            }
+          });
+          NODE
+
+          node /tmp/upload-to-pinata.js
+
+      - name: Add deployment summary
+        run: |
+          CID="${{ steps.upload.outputs.cid }}"
+          {
+            echo "## IPFS deployment"
+            echo ""
+            echo "- CID: \`${CID}\`"
+            echo "- Contenthash candidate: \`ipfs://${CID}\`"
+            echo ""
+            echo "### Gateway URLs to verify"
+            echo ""
+            echo "- https://${CID}.ipfs.dweb.link/"
+            echo "- https://ipfs.io/ipfs/${CID}/"
+            echo "- https://gateway.pinata.cloud/ipfs/${CID}/"
+          } >> "$GITHUB_STEP_SUMMARY"
