@@ -28,6 +28,45 @@ const nav = [
   ["Identity", "/identity/"],
 ];
 
+const pageMetadata = {
+  "/": {
+    title: "Alex Soto (@alexsotodigital) | Governance & Coordination Specialist",
+    description: "Official website of Alex Soto, also known as @alexsotodigital and alexsotodigital.eth. Governance and coordination specialist helping DAOs, cooperatives, distributed teams, and mission-driven organizations improve decision-making, coordination, and institutional learning.",
+  },
+  "/work-with-me/": {
+    title: "Work with Alex Soto | Governance, Coordination & DAO Operations",
+    description: "Work with Alex Soto on governance design, coordination systems, facilitation, DAO operations, ecosystem strategy, and institutional learning for distributed organizations.",
+  },
+  "/experience/": {
+    title: "Experience | Alex Soto Governance & Coordination Practice",
+    description: "Professional experience and collaborations across Alex Soto's governance, coordination, cooperative organizing, self-management, Web3 governance, and social entrepreneurship practice.",
+  },
+  "/projects/": {
+    title: "Projects | Alex Soto Governance & Coordination Practice",
+    description: "Projects by Alex Soto, including applied work in governance, coordination systems, mutualism, institutional learning, Web3 ecosystems, and distributed organizations.",
+  },
+  "/methods/": {
+    title: "Methods | Governance Reviews, Coordination Diagnostics & Institutional Learning",
+    description: "Methods used by Alex Soto: governance reviews, coordination diagnostics, facilitation and decision frameworks, and institutional learning loops for mission-driven organizations.",
+  },
+  "/writing/": {
+    title: "Writing | Alex Soto on Governance, Coordination & Institutional Learning",
+    description: "Essays and reflections by Alex Soto on governance, coordination, DAOs, cooperatives, mutualism, distributed work, and institutional learning.",
+  },
+  "/faq/": {
+    title: "FAQ | Alex Soto Governance & Coordination Specialist",
+    description: "Frequently asked questions about Alex Soto's work in governance design, coordination systems, DAO operations, facilitation, and institutional learning.",
+  },
+  "/identity/": {
+    title: "Official Identity | Alex Soto, @alexsotodigital, alexsotodigital.eth",
+    description: "Canonical identity page for Alex Soto, also known as @alexsotodigital and alexsotodigital.eth. Includes official links, contact methods, ENS identity, and professional references.",
+  },
+  "/about/": {
+    title: "About Alex Soto | Governance & Coordination Specialist",
+    description: "About Alex Soto, also known as @alexsotodigital and alexsotodigital.eth. Governance and coordination specialist based in Mexico, working with DAOs, cooperatives, distributed teams, and mission-driven organizations.",
+  },
+};
+
 const allRecords = {
   services,
   methods,
@@ -82,6 +121,13 @@ function fullUrl(pathname) {
 
 function assetUrl(pathname) {
   return fullUrl(pathname);
+}
+
+function pageMeta(route, fallbackTitle, fallbackDescription) {
+  return pageMetadata[route] || {
+    title: route === "/" ? `${site.name} - ${site.title}` : `${fallbackTitle} - ${site.name}`,
+    description: fallbackDescription || site.positioning,
+  };
 }
 
 function list(items, className = "") {
@@ -139,17 +185,46 @@ function friendlyEvidenceType(type) {
 
 function jsonLdForPage(route) {
   const person = {
-    "@context": "https://schema.org",
     "@type": "Person",
+    "@id": fullUrl("/#alex-soto"),
     name: site.name,
-    alternateName: [site.handle, site.ens],
-    jobTitle: site.title,
-    description: site.positioning,
+    alternateName: [site.handle, `@${site.handle}`, site.ens],
+    jobTitle: "Governance and Coordination Specialist",
+    description: "Alex Soto is a governance and coordination specialist helping distributed organizations, DAOs, cooperatives, and mission-driven teams improve decision-making, coordination, and institutional learning.",
     email: "mailto:alexsotodigital@gmail.com",
     image: assetUrl(site.avatar),
-    ...(configuredSiteUrl ? { url: fullUrl("/") } : {}),
+    url: fullUrl("/"),
+    knowsAbout: [
+      "Governance design",
+      "Coordination systems",
+      "DAO operations",
+      "Distributed organizations",
+      "Institutional learning",
+      "Cooperative governance",
+      "Web3 governance",
+      "Facilitation",
+    ],
     sameAs: links.filter((link) => link.href.startsWith("https://")).map((link) => link.href),
   };
+
+  if (route === "/") {
+    return {
+      "@context": "https://schema.org",
+      "@graph": [
+        person,
+        {
+          "@type": "WebSite",
+          "@id": fullUrl("/#website"),
+          name: site.name,
+          alternateName: site.handle,
+          url: fullUrl("/"),
+          publisher: {
+            "@id": fullUrl("/#alex-soto"),
+          },
+        },
+      ],
+    };
+  }
 
   if (route === "/faq/") {
     return {
@@ -207,21 +282,40 @@ function jsonLdForPage(route) {
     };
   }
 
-  return person;
+  return {
+    "@context": "https://schema.org",
+    ...person,
+  };
 }
 
 function layout({ title, description, route, body }) {
-  const pageTitle = route === "/" ? `${site.name} - ${site.title}` : `${title} - ${site.name}`;
+  const meta = pageMeta(route, title, description);
+  const pageTitle = meta.title;
+  const pageDescription = meta.description;
   const active = (href) => (href === route ? " aria-current=\"page\"" : "");
   const canonicalUrl = fullUrl(route);
+  const previewImage = assetUrl(site.avatar);
   return `<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>${escapeHtml(pageTitle)}</title>
-  <meta name="description" content="${escapeHtml(description || site.positioning)}">
+  <meta name="description" content="${escapeHtml(pageDescription)}">
+  <meta name="robots" content="index, follow">
   ${configuredSiteUrl ? `<link rel="canonical" href="${escapeHtml(canonicalUrl)}">` : ""}
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="${escapeHtml(site.name)}">
+  <meta property="og:title" content="${escapeHtml(pageTitle)}">
+  <meta property="og:description" content="${escapeHtml(pageDescription)}">
+  <meta property="og:url" content="${escapeHtml(canonicalUrl)}">
+  <meta property="og:image" content="${escapeHtml(previewImage)}">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:site" content="@${escapeHtml(site.handle)}">
+  <meta name="twitter:creator" content="@${escapeHtml(site.handle)}">
+  <meta name="twitter:title" content="${escapeHtml(pageTitle)}">
+  <meta name="twitter:description" content="${escapeHtml(pageDescription)}">
+  <meta name="twitter:image" content="${escapeHtml(previewImage)}">
   <style>${inlineStyles()}</style>
   <script type="application/ld+json">${JSON.stringify(jsonLdForPage(route))}</script>
 </head>
@@ -328,11 +422,14 @@ function homePage() {
       <div class="hero-lockup">
         <div>
           <p class="kicker">Public knowledge base</p>
-          <h1>${escapeHtml(site.thesis)}</h1>
+          <h1>${escapeHtml(site.name)} &mdash; ${escapeHtml(site.title)}</h1>
+          <p>This is the official website of ${escapeHtml(site.name)}, also known as @${escapeHtml(site.handle)} and ${escapeHtml(site.ens)}.</p>
+          <p>${escapeHtml(site.thesis)}</p>
           <p>${escapeHtml(site.positioning)}</p>
           ${site.supportingLine ? `<p>${escapeHtml(site.supportingLine)}</p>` : ""}
           <div class="cta-row">
             ${linkTo(site.ctas.primary.href, site.ctas.primary.label, "button")}
+            ${linkTo("/about/", "About Alex Soto", "button secondary")}
             ${linkTo("/identity/", "Verify identity", "button secondary")}
           </div>
         </div>
@@ -343,6 +440,20 @@ function homePage() {
       <p>${escapeHtml(site.shortBio)}</p>
       <div class="term-grid">
         ${site.canonicalTerms.slice(0, 5).map((term) => `<span>${escapeHtml(term)}</span>`).join("")}
+      </div>
+    </section>
+    <section class="band">
+      <h2>Explore the Site</h2>
+      <div class="term-grid">
+        ${[
+          ["/work-with-me/", "Work with Alex Soto"],
+          ["/projects/", "Projects"],
+          ["/methods/", "Methods"],
+          ["/writing/", "Writing"],
+          ["/identity/", "Official identity"],
+          ["/faq/", "FAQ"],
+          ["/about/", "About Alex Soto"],
+        ].map(([href, label]) => linkTo(href, label)).join("")}
       </div>
     </section>
     <section class="band">
@@ -481,6 +592,47 @@ function experiencePage() {
   writePage("/experience/", "Experience", "Professional experience and collaborations across Alex Soto's governance and coordination practice.", body);
 }
 
+function aboutPage() {
+  const selectedExperience = ["alexsotodigital-practice", "optimism", "matriz-experience", "ouitopia"]
+    .map((id) => experience.find((item) => item.id === id))
+    .filter(Boolean);
+  const body = `
+    ${pageHeader("About", "About Alex Soto", "Alex Soto, also known as @alexsotodigital and alexsotodigital.eth, is a governance and coordination specialist based in Mexico. He helps DAOs, cooperatives, distributed teams, and mission-driven organizations design better decision-making systems, coordination practices, and institutional learning loops.")}
+    <section class="band">
+      <h2>What I Do</h2>
+      <p>${escapeHtml(site.positioning)}</p>
+    </section>
+    <section class="band">
+      <h2>Who I Work With</h2>
+      ${list(site.audiences, "tag-list")}
+    </section>
+    <section class="band">
+      <h2>Areas of Practice</h2>
+      ${list(["Governance design", "Coordination systems", "DAO operations", "Distributed organizations", "Institutional learning", "Cooperative governance", "Web3 governance", "Facilitation"], "tag-list")}
+    </section>
+    <section class="band">
+      <h2>Selected Experience</h2>
+      <div class="stack">
+        ${selectedExperience.map(experienceCard).join("")}
+      </div>
+      ${linkTo("/experience/", "View full experience", "text-link")}
+    </section>
+    <section class="band">
+      <h2>Public Identity</h2>
+      <p>${escapeHtml(site.name)} is the canonical visible name. @${escapeHtml(site.handle)} is the public handle. ${escapeHtml(site.ens)} is the Web3 identity and ENS name.</p>
+      ${linkTo("/identity/", "Verify official identity and links", "text-link")}
+    </section>
+    <section class="band final-cta">
+      <h2>Contact</h2>
+      <p>Use a strategy call for potential work, or email a short collaboration brief with context and desired support.</p>
+      <div class="cta-row">
+        ${linkTo(site.ctas.primary.href, site.ctas.primary.label, "button")}
+        ${linkTo(site.ctas.secondary.href, site.ctas.secondary.label, "button secondary")}
+      </div>
+    </section>`;
+  writePage("/about/", "About", "About Alex Soto, governance and coordination specialist.", body);
+}
+
 function methodsPage() {
   const body = `
     ${pageHeader("Methods", "Methods make the practice transferable", "These methods document how governance and coordination work becomes explicit, testable, and reusable.")}
@@ -592,6 +744,7 @@ function identityPage() {
         ${["alexsotodigital-practice", "optimism", "optimism-security-council-cohort-b", "matriz-experience"].map((id) => experience.find((item) => item.id === id)).filter(Boolean).map(experienceCard).join("")}
       </div>
       ${linkTo("/experience/", "View full experience", "text-link")}
+      ${linkTo("/about/", "Read about Alex Soto", "text-link")}
     </section>
     <script>
       document.querySelectorAll("[data-copy]").forEach((button) => {
@@ -638,7 +791,7 @@ function writePage(route, title, description, body) {
 }
 
 function pageRoutes() {
-  return nav.map(([, href]) => href);
+  return [...nav.map(([, href]) => href), "/about/"];
 }
 
 function enhancePayments() {
@@ -679,6 +832,7 @@ function writeJsonEndpoints() {
     practiceSummary: site.practiceSummary,
     experienceSummary: "Alex's experience spans social entrepreneurship, cooperative organizing, self-management, and Web3 governance.",
     experienceUrl: fullUrl("/experience/"),
+    aboutUrl: fullUrl("/about/"),
     url: configuredSiteUrl || null,
     thesis: site.thesis,
     audiences: site.audiences,
@@ -749,6 +903,7 @@ function writeLlmsTxt() {
     "",
     "## Primary pages",
     ...nav.map(([label, href]) => `- ${label}: ${fullUrl(href)}`),
+    `- About: ${fullUrl("/about/")}`,
     "",
     "## Machine-readable endpoints",
     `- about.json: ${fullUrl("/about.json")}`,
@@ -805,6 +960,7 @@ function build() {
   homePage();
   workPage();
   experiencePage();
+  aboutPage();
   methodsPage();
   projectsPage();
   writingPage();

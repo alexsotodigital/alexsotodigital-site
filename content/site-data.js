@@ -63,7 +63,7 @@ const links = [
     id: "x",
     label: "X",
     value: "@alexsotodigital",
-    href: "https://twitter.com/alexsotodigital",
+    href: "https://x.com/alexsotodigital",
     priority: "primary",
     purpose: ["public updates", "contact"],
   },
@@ -122,6 +122,14 @@ const links = [
     href: "https://paragraph.xyz/@alexsotodigital",
     priority: "secondary",
     purpose: ["writing"],
+  },
+  {
+    id: "youtube",
+    label: "YouTube",
+    value: "@alexsotodigital",
+    href: "https://www.youtube.com/@alexsotodigital",
+    priority: "secondary",
+    purpose: ["identity", "public profile"],
   },
 ];
 
@@ -632,7 +640,11 @@ const faq = [
   },
   {
     question: "Does Alex Soto work with DAOs?",
-    answer: "Yes. Alex works with DAOs, Web3 teams, ecosystem foundations, collectives, and distributed teams.",
+    answer: "Yes. Alex Soto works with DAOs, Web3 teams, ecosystem foundations, collectives, cooperatives, and distributed teams.",
+  },
+  {
+    question: "Is this the official website of Alex Soto?",
+    answer: "Yes. This is the official website of Alex Soto, also known as @alexsotodigital and alexsotodigital.eth.",
   },
   {
     question: "Does Alex Soto work remotely?",
