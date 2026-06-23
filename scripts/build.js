@@ -5,6 +5,7 @@ const {
   links,
   payments,
   experience,
+  experienceGroups,
   methods,
   services,
   projects,
@@ -19,6 +20,7 @@ const configuredSiteUrl = normalizeSiteUrl(process.env.SITE_URL || site.baseUrl 
 const nav = [
   ["Home", "/"],
   ["Work with Me", "/work-with-me/"],
+  ["Experience", "/experience/"],
   ["Projects", "/projects/"],
   ["Methods", "/methods/"],
   ["Writing", "/writing/"],
@@ -93,7 +95,7 @@ function recordLink(type, id) {
     methods: [methods, "/methods/"],
     projects: [projects, "/projects/"],
     articles: [articles, "/writing/"],
-    experience: [experience, "/identity/"],
+    experience: [experience, "/experience/"],
   };
   const [collection, href] = map[type] || [];
   const record = collection?.find((item) => item.id === id);
@@ -292,6 +294,29 @@ function articleMeta(article) {
     .join(" / ");
 }
 
+function experienceByGroup() {
+  return experienceGroups.map((group) => ({
+    ...group,
+    records: group.items
+      .map((id) => experience.find((item) => item.id === id))
+      .filter(Boolean),
+  }));
+}
+
+function experienceMeta(item) {
+  return [item.role, item.period, item.status, item.roleType].filter(Boolean).join(" / ");
+}
+
+function experienceCard(item) {
+  return card({
+    id: item.id,
+    title: item.name,
+    meta: experienceMeta(item),
+    summary: item.summary,
+    extra: `${item.context ? `<p>${escapeHtml(item.context)}</p>` : ""}${item.link ? linkTo(item.link, "Reference link", "text-link") : ""}`,
+  });
+}
+
 function homePage() {
   const featuredMethods = methods.filter((method) => method.featured).slice(0, 3);
   const featuredProjects = projects.filter((project) => project.featured).slice(0, 4);
@@ -323,6 +348,18 @@ function homePage() {
     <section class="band">
       <h2>Source of Credibility</h2>
       <p>${escapeHtml(site.practiceSummary)}</p>
+    </section>
+    <section class="band">
+      <h2>Experience Across Contexts</h2>
+      <p>Alex's practice has developed across social entrepreneurship, cooperative organizing, self-management, and Web3 governance. The common thread is helping groups coordinate, make decisions, distribute responsibility, and learn from practice.</p>
+      <div class="stack">
+        ${experienceGroups.map((group) => card({
+          id: group.id,
+          title: group.title,
+          summary: group.summary,
+          extra: linkTo(`/experience/#${group.id}`, "View experience", "text-link"),
+        })).join("")}
+      </div>
     </section>
     <section class="band">
       <h2>Central Question</h2>
@@ -422,6 +459,26 @@ function workPage() {
       </div>
     </section>`;
   writePage("/work-with-me/", "Work with Me", site.positioning, body);
+}
+
+function experiencePage() {
+  const grouped = experienceByGroup();
+  const body = `
+    ${pageHeader("Experience", "A trajectory across governance, coordination, cooperative organizing, and social entrepreneurship.", "Rather than a conventional resume, this page shows the contexts where Alex Soto has developed and applied his governance and coordination practice.")}
+    <section class="band">
+      <h2>Trajectory</h2>
+      <p>Across social entrepreneurship, cooperative organizing, self-management, and Web3 governance, Alex's work has focused on how groups coordinate, make decisions, distribute responsibility, and learn from practice.</p>
+    </section>
+    ${grouped.map((group) => `
+      <section id="${escapeHtml(group.id)}" class="band">
+        <h2>${escapeHtml(group.title)}</h2>
+        <p>${escapeHtml(group.summary)}</p>
+        <div class="stack">
+          ${group.records.map(experienceCard).join("")}
+        </div>
+      </section>
+    `).join("")}`;
+  writePage("/experience/", "Experience", "Professional experience and collaborations across Alex Soto's governance and coordination practice.", body);
 }
 
 function methodsPage() {
@@ -532,14 +589,9 @@ function identityPage() {
       <h2>Selected Experience</h2>
       <p>A compact trajectory of roles and contexts that inform the practice.</p>
       <div class="stack">
-        ${experience.map((item) => card({
-          id: item.id,
-          title: item.name,
-          meta: `${item.role} / ${item.period} / ${item.status}`,
-          summary: item.summary,
-          extra: item.link ? linkTo(item.link, "Reference link", "text-link") : "",
-        })).join("")}
+        ${["alexsotodigital-practice", "optimism", "optimism-security-council-cohort-b", "matriz-experience"].map((id) => experience.find((item) => item.id === id)).filter(Boolean).map(experienceCard).join("")}
       </div>
+      ${linkTo("/experience/", "View full experience", "text-link")}
     </section>
     <script>
       document.querySelectorAll("[data-copy]").forEach((button) => {
@@ -625,6 +677,8 @@ function writeJsonEndpoints() {
     supportingLine: site.supportingLine,
     centralQuestion: site.centralQuestion,
     practiceSummary: site.practiceSummary,
+    experienceSummary: "Alex's experience spans social entrepreneurship, cooperative organizing, self-management, and Web3 governance.",
+    experienceUrl: fullUrl("/experience/"),
     url: configuredSiteUrl || null,
     thesis: site.thesis,
     audiences: site.audiences,
@@ -636,6 +690,15 @@ function writeJsonEndpoints() {
     "about.json": about,
     "services.json": services,
     "projects.json": projects,
+    "experience.json": {
+      summary: "Professional experience and collaborations across Alex Soto's governance and coordination practice.",
+      groups: experienceByGroup().map((group) => ({
+        id: group.id,
+        title: group.title,
+        summary: group.summary,
+        items: group.records,
+      })),
+    },
     "faq.json": faq,
     "links.json": links,
     "payments.json": enhancePayments(),
@@ -691,6 +754,7 @@ function writeLlmsTxt() {
     `- about.json: ${fullUrl("/about.json")}`,
     `- services.json: ${fullUrl("/services.json")}`,
     `- projects.json: ${fullUrl("/projects.json")}`,
+    `- experience.json: ${fullUrl("/experience.json")}`,
     `- faq.json: ${fullUrl("/faq.json")}`,
     `- links.json: ${fullUrl("/links.json")}`,
     `- payments.json: ${fullUrl("/payments.json")}`,
@@ -709,6 +773,10 @@ function writeLlmsTxt() {
     "## Practice contexts",
     "Projects are practice contexts and laboratories, not standalone flagship proof.",
     ...projects.filter((project) => project.featured).map((project) => `- ${project.title}: ${project.summary}`),
+    "",
+    "## Experience across contexts",
+    "Experience is presented as a professional trajectory, not as a product portfolio.",
+    ...experienceGroups.map((group) => `- ${group.title}: ${group.summary}`),
     "",
     "## Featured writing",
     ...articles.filter((article) => article.featured).map((article) => `- ${article.title}: ${article.href}`),
@@ -736,6 +804,7 @@ function build() {
   copyAssets();
   homePage();
   workPage();
+  experiencePage();
   methodsPage();
   projectsPage();
   writingPage();
