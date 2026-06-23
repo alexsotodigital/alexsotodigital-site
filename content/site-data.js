@@ -187,6 +187,16 @@ const experience = [
     link: "https://github.com/ethereum-optimism/ecosystem-contributions/issues/28",
   },
   {
+    id: "optimism-security-council-cohort-b",
+    name: "Optimism",
+    role: "Security Council Cohort B Member",
+    period: "Aug 2026-Aug 2027",
+    status: "Elected",
+    summary: "Elected Security Council Cohort B Member at Optimism, supporting the operational security and resilience of protocol governance through multisig participation and signer responsibilities.",
+    evidenceFor: ["governance-reviews", "coordination-diagnostics"],
+    link: "https://gov.optimism.io/t/season-9-security-council-cohort-b-elections/10656/15?u=alexsotodigital",
+  },
+  {
     id: "scroll",
     name: "Scroll",
     role: "Delegate / Contributor",
