@@ -51,6 +51,15 @@ function escapeHtml(value) {
     .replace(/"/g, "&quot;");
 }
 
+let cachedStyles = null;
+
+function inlineStyles() {
+  if (cachedStyles === null) {
+    cachedStyles = fs.readFileSync(path.join(root, "src", "styles.css"), "utf8");
+  }
+  return cachedStyles.replace(/<\/style/gi, "<\\/style");
+}
+
 function slugPath(route) {
   return route === "/" ? outDir : path.join(outDir, route);
 }
@@ -211,7 +220,7 @@ function layout({ title, description, route, body }) {
   <title>${escapeHtml(pageTitle)}</title>
   <meta name="description" content="${escapeHtml(description || site.positioning)}">
   ${configuredSiteUrl ? `<link rel="canonical" href="${escapeHtml(canonicalUrl)}">` : ""}
-  <link rel="stylesheet" href="/assets/styles.css">
+  <style>${inlineStyles()}</style>
   <script type="application/ld+json">${JSON.stringify(jsonLdForPage(route))}</script>
 </head>
 <body>
