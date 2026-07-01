@@ -123,6 +123,11 @@ function assetUrl(pathname) {
   return fullUrl(pathname);
 }
 
+function rootRelativeAsset(route, fileName) {
+  const prefix = route === "/" ? "." : "..";
+  return `${prefix}/${fileName}`;
+}
+
 function pageMeta(route, fallbackTitle, fallbackDescription) {
   return pageMetadata[route] || {
     title: route === "/" ? `${site.name} - ${site.title}` : `${fallbackTitle} - ${site.name}`,
@@ -295,6 +300,7 @@ function layout({ title, description, route, body }) {
   const active = (href) => (href === route ? " aria-current=\"page\"" : "");
   const canonicalUrl = fullUrl(route);
   const previewImage = assetUrl(site.avatar);
+  const faviconVersion = "2";
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -304,6 +310,11 @@ function layout({ title, description, route, body }) {
   <meta name="description" content="${escapeHtml(pageDescription)}">
   <meta name="robots" content="index, follow">
   ${configuredSiteUrl ? `<link rel="canonical" href="${escapeHtml(canonicalUrl)}">` : ""}
+  <link rel="icon" href="${escapeHtml(rootRelativeAsset(route, `favicon.ico?v=${faviconVersion}`))}" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="${escapeHtml(rootRelativeAsset(route, `favicon-32x32.png?v=${faviconVersion}`))}">
+  <link rel="icon" type="image/png" sizes="16x16" href="${escapeHtml(rootRelativeAsset(route, `favicon-16x16.png?v=${faviconVersion}`))}">
+  <link rel="apple-touch-icon" sizes="180x180" href="${escapeHtml(rootRelativeAsset(route, `apple-touch-icon.png?v=${faviconVersion}`))}">
+  <link rel="manifest" href="${escapeHtml(rootRelativeAsset(route, `site.webmanifest?v=${faviconVersion}`))}">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="${escapeHtml(site.name)}">
   <meta property="og:title" content="${escapeHtml(pageTitle)}">
@@ -954,9 +965,18 @@ function copyAssets() {
   }
 }
 
+function copyFavicons() {
+  const faviconsDir = path.join(root, "src", "favicons");
+  if (!fs.existsSync(faviconsDir)) return;
+  for (const fileName of fs.readdirSync(faviconsDir)) {
+    fs.copyFileSync(path.join(faviconsDir, fileName), path.join(outDir, fileName));
+  }
+}
+
 function build() {
   ensureDir(outDir);
   copyAssets();
+  copyFavicons();
   homePage();
   workPage();
   experiencePage();
