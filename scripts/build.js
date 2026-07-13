@@ -399,6 +399,11 @@ function articleMeta(article) {
     .join(" / ");
 }
 
+function articleLinks(article) {
+  const primaryLabel = article.originalHref ? "Read on Paragraph" : "Read original";
+  return `${linkTo(article.href, primaryLabel, "text-link")}${article.originalHref ? linkTo(article.originalHref, "Original publication", "text-link") : ""}`;
+}
+
 function experienceByGroup() {
   return experienceGroups.map((group) => ({
     ...group,
@@ -536,7 +541,7 @@ function homePage() {
           title: article.title,
           meta: articleMeta(article),
           summary: article.summary,
-          extra: linkTo(article.href, "Read original", "text-link"),
+          extra: articleLinks(article),
         })).join("")}
       </div>
     </section>
@@ -690,7 +695,7 @@ function writingPage() {
           title: article.title,
           meta: articleMeta(article),
           summary: article.summary,
-          extra: `${linkTo(article.href, "Read original", "text-link")}<h4>Supports</h4>${list(article.evidenceFor.map((id) => services.find((service) => service.id === id)?.title || methods.find((method) => method.id === id)?.title || id), "tag-list")}`,
+          extra: `${articleLinks(article)}<h4>Supports</h4>${list(article.evidenceFor.map((id) => services.find((service) => service.id === id)?.title || methods.find((method) => method.id === id)?.title || id), "tag-list")}`,
         })).join("")}
       </div>
     </section>`;

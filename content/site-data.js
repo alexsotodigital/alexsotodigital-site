@@ -631,6 +631,17 @@ const articles = [
     summary: "A piece on development, care, and the need for adaptive progress that does not destroy the systems it depends on.",
     evidenceFor: ["institutional-learning", "coordination-systems"],
   },
+  {
+    id: "carework-heart-good-governance",
+    title: "Carework: The heart of good governance",
+    featured: false,
+    theme: "Governance as Care Work",
+    source: "Paragraph repost, July 2026 / DisCO.coop Stories, May 2023",
+    href: "https://paragraph.com/@alexsotodigital/carework",
+    originalHref: "https://www.disco.coop/2023/05/carework-the-heart-of-good-governance/",
+    summary: "Care work is at the heart of good governance for any collective. The article explores how caring processes often require time and attention that may not directly serve individual output, but are essential for the health and coordination of the organization as a whole.",
+    evidenceFor: ["institutional-learning"],
+  },
 ];
 
 const faq = [
