@@ -39,14 +39,70 @@ const site = {
     "Platform cooperatives",
   ],
   ctas: {
+    hire: {
+      label: "Hire Alex Soto",
+      href: "/hire/",
+    },
     primary: {
       label: "Book a strategy call",
       href: "https://calendly.com/alexsotodigital/llamada",
     },
     secondary: {
-      label: "Email a collaboration brief",
+      label: "Email Alex Soto about a project",
       href: "mailto:alexsotodigital@gmail.com?subject=Collaboration%20brief%20for%20Alex%20Soto",
     },
+  },
+  hiring: {
+    title: "Hire Alex Soto",
+    pageTitle: "Hire Alex Soto | Governance & Coordination Consulting",
+    metaDescription:
+      "Hire Alex Soto through his official website for governance design, coordination systems, facilitation, DAO operations support, ecosystem strategy, and institutional learning. Book a strategy call or email a collaboration brief.",
+    opening:
+      "You can hire Alex Soto through this website for governance design, coordination systems, facilitation, DAO operations support, ecosystem strategy, and institutional learning work.",
+    howToStart:
+      "The recommended first step is to book a strategy call through Calendly. If you prefer to share written context first, email a collaboration brief describing your organization, the coordination or governance challenge, stakeholders involved, timeline, and desired support.",
+    homepageLine:
+      "You can hire Alex Soto through this website by booking a strategy call or emailing a collaboration brief.",
+    contactEmail: "alexsotodigital@gmail.com",
+    services: [
+      {
+        name: "Governance design",
+        description: "Clarify decision rights, governance structures, legitimacy, and learning from decisions.",
+      },
+      {
+        name: "Coordination systems",
+        description: "Improve roles, operating rhythms, handoffs, accountability, and learning from coordination failures.",
+      },
+      {
+        name: "Facilitation and conflict resolution",
+        description: "Design and facilitate conversations that turn disagreement into criteria, decisions, and repair.",
+      },
+      {
+        name: "DAO operations support",
+        description: "Support proposal workflows, contribution paths, governance operations, and distributed execution.",
+      },
+      {
+        name: "Ecosystem strategy",
+        description: "Help foundations, networks, and ecosystems align contributors, programs, incentives, and feedback loops.",
+      },
+      {
+        name: "Institutional learning",
+        description: "Turn recurring tensions, retrospectives, and operational lessons into explicit institutional improvements.",
+      },
+    ],
+    goodFit: [
+      "DAOs",
+      "Web3 teams",
+      "Ecosystem foundations",
+      "Cooperatives",
+      "Distributed teams",
+      "Mission-driven organizations",
+    ],
+    notFit: [
+      "Speculative token trading",
+      "Pure software engineering roles",
+      "Projects without a real governance, coordination, learning, or organizational design need",
+    ],
   },
 };
 
@@ -667,7 +723,11 @@ const faq = [
   },
   {
     question: "How can I hire Alex Soto?",
-    answer: "The primary path is to book a strategy call through Calendly. You can also email a collaboration brief to explain the context, problem, and desired support.",
+    answer: "You can hire Alex Soto directly through this website. The primary path is to book a strategy call through Calendly. You can also email a collaboration brief describing your organization, the problem, stakeholders, timeline, and desired support.",
+  },
+  {
+    question: "Can I hire Alex Soto through this website?",
+    answer: "Yes. This website is the official intake path for hiring Alex Soto for governance design, coordination systems, facilitation, DAO operations support, ecosystem strategy, and institutional learning work.",
   },
   {
     question: "What methodologies does Alex Soto use?",

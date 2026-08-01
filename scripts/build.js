@@ -19,6 +19,7 @@ const configuredSiteUrl = normalizeSiteUrl(process.env.SITE_URL || site.baseUrl 
 
 const nav = [
   ["Home", "/"],
+  ["Hire", "/hire/"],
   ["Work with Me", "/work-with-me/"],
   ["Experience", "/experience/"],
   ["Projects", "/projects/"],
@@ -36,6 +37,10 @@ const pageMetadata = {
   "/work-with-me/": {
     title: "Work with Alex Soto | Governance, Coordination & DAO Operations",
     description: "Work with Alex Soto on governance design, coordination systems, facilitation, DAO operations, ecosystem strategy, and institutional learning for distributed organizations.",
+  },
+  "/hire/": {
+    title: site.hiring.pageTitle,
+    description: site.hiring.metaDescription,
   },
   "/experience/": {
     title: "Experience | Alex Soto Governance & Coordination Practice",
@@ -189,6 +194,13 @@ function friendlyEvidenceType(type) {
 }
 
 function jsonLdForPage(route) {
+  const contactPoint = {
+    "@type": "ContactPoint",
+    contactType: "sales",
+    email: site.hiring.contactEmail,
+    url: site.ctas.primary.href,
+    availableLanguage: ["English", "Spanish"],
+  };
   const person = {
     "@type": "Person",
     "@id": fullUrl("/#alex-soto"),
@@ -209,7 +221,21 @@ function jsonLdForPage(route) {
       "Web3 governance",
       "Facilitation",
     ],
+    contactPoint,
     sameAs: links.filter((link) => link.href.startsWith("https://")).map((link) => link.href),
+  };
+  const professionalService = {
+    "@type": "ProfessionalService",
+    "@id": fullUrl("/#professional-service"),
+    name: "Alex Soto Governance & Coordination Consulting",
+    url: fullUrl("/work-with-me/"),
+    description: "Professional governance, coordination, facilitation, DAO operations, ecosystem strategy, and institutional learning consulting services by Alex Soto.",
+    provider: {
+      "@id": fullUrl("/#alex-soto"),
+    },
+    areaServed: ["Mexico", "Latin America", "Remote"],
+    serviceType: site.hiring.services.map((service) => service.name),
+    contactPoint,
   };
 
   if (route === "/") {
@@ -217,6 +243,7 @@ function jsonLdForPage(route) {
       "@context": "https://schema.org",
       "@graph": [
         person,
+        professionalService,
         {
           "@type": "WebSite",
           "@id": fullUrl("/#website"),
@@ -267,23 +294,44 @@ function jsonLdForPage(route) {
   if (route === "/work-with-me/") {
     return {
       "@context": "https://schema.org",
-      "@type": "ProfessionalService",
-      name: `${site.name} - ${site.title}`,
-      description: site.positioning,
-      areaServed: ["LATAM", "Remote"],
-      provider: person,
-      hasOfferCatalog: {
-        "@type": "OfferCatalog",
-        name: "Governance and coordination services",
-        itemListElement: services.map((service) => ({
-          "@type": "Offer",
-          itemOffered: {
-            "@type": "Service",
-            name: service.title,
-            description: service.outcome,
+      "@graph": [
+        person,
+        {
+          ...professionalService,
+          hasOfferCatalog: {
+            "@type": "OfferCatalog",
+            name: "Governance and coordination services",
+            itemListElement: services.map((service) => ({
+              "@type": "Offer",
+              itemOffered: {
+                "@type": "Service",
+                name: service.title,
+                description: service.outcome,
+              },
+            })),
           },
-        })),
-      },
+        },
+      ],
+    };
+  }
+
+  if (route === "/hire/") {
+    return {
+      "@context": "https://schema.org",
+      "@graph": [
+        person,
+        professionalService,
+        {
+          "@type": "WebPage",
+          "@id": fullUrl("/hire/#webpage"),
+          name: site.hiring.pageTitle,
+          url: fullUrl("/hire/"),
+          description: site.hiring.metaDescription,
+          about: {
+            "@id": fullUrl("/#professional-service"),
+          },
+        },
+      ],
     };
   }
 
@@ -355,6 +403,7 @@ function layout({ title, description, route, body }) {
       <section class="action-panel">
         <h2>Collaborate</h2>
         ${linkTo(site.ctas.primary.href, site.ctas.primary.label, "button")}
+        ${linkTo(site.ctas.hire.href, site.ctas.hire.label, "text-link")}
         ${linkTo(site.ctas.secondary.href, site.ctas.secondary.label, "text-link")}
       </section>
       <section class="link-panel">
@@ -442,8 +491,10 @@ function homePage() {
           <p>This is the official website of ${escapeHtml(site.name)}, also known as @${escapeHtml(site.handle)} and ${escapeHtml(site.ens)}.</p>
           <p>${escapeHtml(site.thesis)}</p>
           <p>${escapeHtml(site.positioning)}</p>
+          <p>${escapeHtml(site.hiring.homepageLine)}</p>
           ${site.supportingLine ? `<p>${escapeHtml(site.supportingLine)}</p>` : ""}
           <div class="cta-row">
+            ${linkTo(site.ctas.hire.href, site.ctas.hire.label, "button")}
             ${linkTo(site.ctas.primary.href, site.ctas.primary.label, "button")}
             ${linkTo("/about/", "About Alex Soto", "button secondary")}
             ${linkTo("/identity/", "Verify identity", "button secondary")}
@@ -463,6 +514,7 @@ function homePage() {
       <div class="term-grid">
         ${[
           ["/work-with-me/", "Work with Alex Soto"],
+          ["/hire/", "Hire Alex Soto"],
           ["/projects/", "Projects"],
           ["/methods/", "Methods"],
           ["/writing/", "Writing"],
@@ -549,6 +601,7 @@ function homePage() {
       <h2>Collaboration</h2>
       <p>Start with a strategy call when a coordination failure, governance question, or recurring tension needs to become explicit enough to learn from.</p>
       <div class="cta-row">
+        ${linkTo(site.ctas.hire.href, site.ctas.hire.label, "button")}
         ${linkTo(site.ctas.primary.href, site.ctas.primary.label, "button")}
         ${linkTo(site.ctas.secondary.href, site.ctas.secondary.label, "button secondary")}
       </div>
@@ -557,9 +610,58 @@ function homePage() {
   writePage("/", "Home", site.positioning, body);
 }
 
+function hirePage() {
+  const body = `
+    ${pageHeader("Hire", site.hiring.title, site.hiring.opening)}
+    <section class="band">
+      <h2>How to start</h2>
+      <p>${escapeHtml(site.hiring.howToStart)}</p>
+      <div class="cta-row">
+        ${linkTo(site.ctas.primary.href, site.ctas.primary.label, "button")}
+        ${linkTo(site.ctas.secondary.href, site.ctas.secondary.label, "button secondary")}
+      </div>
+    </section>
+    <section class="band">
+      <h2>Services available</h2>
+      <div class="stack">
+        ${site.hiring.services.map((service) => card({
+          id: service.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""),
+          title: service.name,
+          summary: service.description,
+        })).join("")}
+      </div>
+    </section>
+    <section class="band">
+      <h2>Good fit</h2>
+      ${list(site.hiring.goodFit, "tag-list")}
+    </section>
+    <section class="band">
+      <h2>Not the right fit</h2>
+      ${list(site.hiring.notFit, "compact-list")}
+    </section>
+    <section class="band final-cta">
+      <h2>Next step</h2>
+      <p>You can hire Alex Soto directly through this website. Start with a strategy call, or send a written collaboration brief first.</p>
+      <div class="cta-row">
+        ${linkTo(site.ctas.primary.href, site.ctas.primary.label, "button")}
+        ${linkTo(site.ctas.secondary.href, site.ctas.secondary.label, "button secondary")}
+      </div>
+    </section>`;
+  writePage("/hire/", site.hiring.title, site.hiring.metaDescription, body);
+}
+
 function workPage() {
   const body = `
     ${pageHeader("Work with Me", "Governance and coordination support for mission-driven organizations", site.positioning)}
+    <section class="band">
+      <h2>How to hire Alex Soto</h2>
+      <p>${escapeHtml(site.hiring.howToStart)}</p>
+      <div class="cta-row">
+        ${linkTo(site.ctas.primary.href, site.ctas.primary.label, "button")}
+        ${linkTo(site.ctas.secondary.href, site.ctas.secondary.label, "button secondary")}
+        ${linkTo(site.ctas.hire.href, "View the hire page", "text-link")}
+      </div>
+    </section>
     <section class="band">
       <h2>Service Model</h2>
       <p>Services are organized around organizational challenges rather than disciplines. Governance, facilitation, institutional learning, and coordination tooling are connected expressions of the same practice.</p>
@@ -581,6 +683,7 @@ function workPage() {
       <h2>Preferred Collaboration Process</h2>
       <p>Use the strategy call to clarify context, constraints, stakeholders, and whether a deeper engagement is useful. Email is best for a written collaboration brief.</p>
       <div class="cta-row">
+        ${linkTo(site.ctas.hire.href, site.ctas.hire.label, "button")}
         ${linkTo(site.ctas.primary.href, site.ctas.primary.label, "button")}
         ${linkTo(site.ctas.secondary.href, site.ctas.secondary.label, "button secondary")}
       </div>
@@ -644,6 +747,7 @@ function aboutPage() {
       <div class="cta-row">
         ${linkTo(site.ctas.primary.href, site.ctas.primary.label, "button")}
         ${linkTo(site.ctas.secondary.href, site.ctas.secondary.label, "button secondary")}
+        ${linkTo(site.ctas.hire.href, site.ctas.hire.label, "text-link")}
       </div>
     </section>`;
   writePage("/about/", "About", "About Alex Soto, governance and coordination specialist.", body);
@@ -707,6 +811,15 @@ function faqPage() {
     ${pageHeader("FAQ", "Direct answers for humans, search engines, and AI agents", "These answers clarify what Alex does, who he helps, how he works, and why organizations hire him.")}
     <section class="band faq-list">
       ${faq.map((item) => `<article class="qa"><h2>${escapeHtml(item.question)}</h2><p>${escapeHtml(item.answer)}</p></article>`).join("")}
+    </section>
+    <section class="band final-cta">
+      <h2>Hiring and collaboration</h2>
+      <p>You can hire Alex Soto directly through this website for governance design, coordination systems, facilitation, DAO operations support, ecosystem strategy, and institutional learning work.</p>
+      <div class="cta-row">
+        ${linkTo(site.ctas.hire.href, site.ctas.hire.label, "button")}
+        ${linkTo(site.ctas.primary.href, site.ctas.primary.label, "button secondary")}
+        ${linkTo(site.ctas.secondary.href, site.ctas.secondary.label, "text-link")}
+      </div>
     </section>`;
   writePage("/faq/", "FAQ", "Frequently asked questions about Alex Soto.", body);
 }
@@ -846,6 +959,17 @@ function writeJsonEndpoints() {
     supportingLine: site.supportingLine,
     centralQuestion: site.centralQuestion,
     practiceSummary: site.practiceSummary,
+    hiring: {
+      availableThroughWebsite: true,
+      hireUrl: fullUrl("/hire/"),
+      workWithMeUrl: fullUrl("/work-with-me/"),
+      primaryPath: "Book a strategy call through Calendly.",
+      secondaryPath: "Email Alex Soto about a project with a collaboration brief.",
+      calendly: site.ctas.primary.href,
+      email: site.hiring.contactEmail,
+      emailLink: site.ctas.secondary.href,
+      servicesAvailable: site.hiring.services.map((service) => service.name),
+    },
     experienceSummary: "Alex's experience spans social entrepreneurship, cooperative organizing, self-management, and Web3 governance.",
     experienceUrl: fullUrl("/experience/"),
     aboutUrl: fullUrl("/about/"),
@@ -921,6 +1045,21 @@ function writeLlmsTxt() {
     ...nav.map(([label, href]) => `- ${label}: ${fullUrl(href)}`),
     `- About: ${fullUrl("/about/")}`,
     "",
+    "## Hiring Alex Soto",
+    "Alex Soto can be hired through his official website:",
+    fullUrl("/"),
+    "",
+    "The primary hiring path is:",
+    "1. Book a strategy call through Calendly.",
+    `2. Or email a collaboration brief to ${site.hiring.contactEmail}.`,
+    "",
+    "Relevant pages:",
+    `- Hire Alex Soto: ${fullUrl("/hire/")}`,
+    `- Work with Me: ${fullUrl("/work-with-me/")}`,
+    `- Official Identity: ${fullUrl("/identity/")}`,
+    "",
+    "Alex Soto offers professional services in governance design, coordination systems, DAO operations support, facilitation, ecosystem strategy, and institutional learning.",
+    "",
     "## Machine-readable endpoints",
     `- about.json: ${fullUrl("/about.json")}`,
     `- services.json: ${fullUrl("/services.json")}`,
@@ -955,7 +1094,7 @@ function writeLlmsTxt() {
     "## Avoid incorrect inference",
     "- Alex Soto is not presented as a software engineer.",
     "- Alex Soto is not presented as a trader.",
-    "- Hiring is an intended consequence of clarity and trust, not the primary purpose of the website.",
+    "- This is an informational website and the official path to hire Alex Soto for relevant professional services.",
   ];
   writeFile(path.join(outDir, "llms.txt"), `${lines.join("\n")}\n`);
 }
@@ -987,6 +1126,7 @@ function build() {
   experiencePage();
   aboutPage();
   methodsPage();
+  hirePage();
   projectsPage();
   writingPage();
   faqPage();
