@@ -2,6 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const {
   site,
+  practice,
   links,
   payments,
   experience,
@@ -32,11 +33,15 @@ const nav = [
 const pageMetadata = {
   "/": {
     title: "Alex Soto (@alexsotodigital) | Governance & Coordination Specialist",
-    description: "Official website of Alex Soto, also known as @alexsotodigital and alexsotodigital.eth. Governance and coordination specialist helping DAOs, cooperatives, distributed teams, and mission-driven organizations improve decision-making, coordination, and institutional learning.",
+    description: site.shortBio,
   },
   "/work-with-me/": {
-    title: "Work with Alex Soto | Governance, Coordination & DAO Operations",
-    description: "Work with Alex Soto on governance design, coordination systems, facilitation, DAO operations, ecosystem strategy, and institutional learning for distributed organizations.",
+    title: "Work with Alex Soto | Organizational Development & Governance",
+    description: `${site.professionalClassification} Clarify decision rights, roles and coordination for growing and distributed teams.`,
+  },
+  "/organizational-development/": {
+    title: "Organizational Development for Growing & Distributed Teams | Alex Soto",
+    description: practice.knowledgePage.summary,
   },
   "/hire/": {
     title: site.hiring.pageTitle,
@@ -44,7 +49,7 @@ const pageMetadata = {
   },
   "/experience/": {
     title: "Experience | Alex Soto Governance & Coordination Practice",
-    description: "Professional experience and collaborations across Alex Soto's governance, coordination, cooperative organizing, self-management, Web3 governance, and social entrepreneurship practice.",
+    description: "Experience informing Alex Soto's organizational development, governance and coordination practice: role mapping, self-management, facilitation, cooperatives and Web3 governance.",
   },
   "/projects/": {
     title: "Projects | Alex Soto Governance & Coordination Practice",
@@ -68,7 +73,7 @@ const pageMetadata = {
   },
   "/about/": {
     title: "About Alex Soto | Governance & Coordination Specialist",
-    description: "About Alex Soto, also known as @alexsotodigital and alexsotodigital.eth. Governance and coordination specialist based in Mexico, working with DAOs, cooperatives, distributed teams, and mission-driven organizations.",
+    description: site.shortBio,
   },
 };
 
@@ -199,84 +204,80 @@ function jsonLdForPage(route) {
     contactType: "sales",
     email: site.hiring.contactEmail,
     url: site.ctas.primary.href,
-    availableLanguage: ["English", "Spanish"],
+    availableLanguage: site.languages.map((language) => language.split(" (")[0]),
   };
   const person = {
     "@type": "Person",
     "@id": fullUrl("/#alex-soto"),
     name: site.name,
     alternateName: [site.handle, `@${site.handle}`, site.ens],
-    jobTitle: "Governance and Coordination Specialist",
-    description: "Alex Soto is a governance and coordination specialist helping distributed organizations, DAOs, cooperatives, and mission-driven teams improve decision-making, coordination, and institutional learning.",
-    email: "mailto:alexsotodigital@gmail.com",
+    jobTitle: site.title,
+    description: site.shortBio,
+    email: site.hiring.contactEmail,
+    homeLocation: { "@type": "Place", name: site.location },
+    knowsLanguage: contactPoint.availableLanguage,
     image: assetUrl(site.avatar),
     url: fullUrl("/"),
-    knowsAbout: [
-      "Governance design",
-      "Coordination systems",
-      "DAO operations",
-      "Distributed organizations",
-      "Institutional learning",
-      "Cooperative governance",
-      "Web3 governance",
-      "Facilitation",
-    ],
+    knowsAbout: [...new Set([...practice.categories, ...practice.adjacentCategories, ...practice.expertise, "DAO operations", "Web3 governance"])],
     contactPoint,
-    sameAs: links.filter((link) => link.href.startsWith("https://")).map((link) => link.href),
+    sameAs: links.filter((link) => link.href.startsWith("https://") && link.id !== "calendly").map((link) => link.href),
   };
   const professionalService = {
-    "@type": "ProfessionalService",
+    "@type": "Service",
     "@id": fullUrl("/#professional-service"),
     name: "Alex Soto Governance & Coordination Consulting",
     url: fullUrl("/work-with-me/"),
-    description: "Professional governance, coordination, facilitation, DAO operations, ecosystem strategy, and institutional learning consulting services by Alex Soto.",
+    description: site.hiring.opening,
     provider: {
       "@id": fullUrl("/#alex-soto"),
     },
-    areaServed: ["Mexico", "Latin America", "Remote"],
+    areaServed: site.serviceArea,
+    category: practice.categories,
     serviceType: site.hiring.services.map((service) => service.name),
-    contactPoint,
+    availableChannel: { "@type": "ServiceChannel", serviceUrl: fullUrl("/hire/") },
   };
 
+  const webpage = {
+    "@type": "WebPage",
+    "@id": fullUrl(`${route}#webpage`),
+    url: fullUrl(route),
+    name: pageMetadata[route].title,
+    description: pageMetadata[route].description,
+    about: { "@id": person["@id"] },
+    author: { "@id": person["@id"] },
+    isPartOf: { "@id": fullUrl("/#website") },
+    inLanguage: "en",
+  };
+  const website = {
+    "@type": "WebSite",
+    "@id": fullUrl("/#website"),
+    name: site.name,
+    alternateName: site.handle,
+    url: fullUrl("/"),
+    publisher: { "@id": person["@id"] },
+  };
+  const graph = [person, website, webpage];
+
   if (route === "/") {
-    return {
-      "@context": "https://schema.org",
-      "@graph": [
-        person,
-        professionalService,
-        {
-          "@type": "WebSite",
-          "@id": fullUrl("/#website"),
-          name: site.name,
-          alternateName: site.handle,
-          url: fullUrl("/"),
-          publisher: {
-            "@id": fullUrl("/#alex-soto"),
-          },
-        },
-      ],
-    };
+    graph.push(professionalService);
   }
 
   if (route === "/faq/") {
-    return {
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      mainEntity: faq.map((item) => ({
-        "@type": "Question",
-        name: item.question,
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: item.answer,
-        },
-      })),
-    };
+    webpage["@type"] = "FAQPage";
+    webpage.mainEntity = faq.map((item) => ({
+      "@type": "Question",
+      name: item.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: item.answer,
+      },
+    }));
   }
 
   if (route === "/writing/") {
-    return {
-      "@context": "https://schema.org",
+    graph.push({
       "@type": "ItemList",
+      "@id": fullUrl("/writing/#essays"),
       name: "Writing by Alex Soto",
       itemListElement: articles.map((article, index) => ({
         "@type": "ListItem",
@@ -286,58 +287,56 @@ function jsonLdForPage(route) {
           name: article.title,
           url: article.href,
           description: article.summary,
+          author: { "@id": person["@id"] },
+          about: { "@type": "Thing", name: article.theme },
         },
       })),
-    };
+    });
+    webpage.mainEntity = { "@id": fullUrl("/writing/#essays") };
   }
 
   if (route === "/work-with-me/") {
-    return {
-      "@context": "https://schema.org",
-      "@graph": [
-        person,
-        {
-          ...professionalService,
-          hasOfferCatalog: {
-            "@type": "OfferCatalog",
-            name: "Governance and coordination services",
-            itemListElement: services.map((service) => ({
-              "@type": "Offer",
-              itemOffered: {
-                "@type": "Service",
-                name: service.title,
-                description: service.outcome,
-              },
-            })),
+    graph.push({
+      ...professionalService,
+      hasOfferCatalog: {
+        "@type": "OfferCatalog",
+        name: "Organizational development, governance and coordination services",
+        itemListElement: services.map((service) => ({
+          "@type": "Offer",
+          itemOffered: {
+            "@type": "Service",
+            "@id": fullUrl(`/work-with-me/#${service.id}`),
+            url: fullUrl(`/work-with-me/#${service.id}`),
+            name: service.title,
+            description: service.outcome,
+            category: service.categories,
+            serviceType: service.interventions,
+            provider: { "@id": person["@id"] },
+            areaServed: site.serviceArea,
+            serviceOutput: service.deliverables.map((name) => ({ "@type": "Thing", name })),
           },
-        },
-      ],
-    };
+        })),
+      },
+    });
   }
 
   if (route === "/hire/") {
-    return {
-      "@context": "https://schema.org",
-      "@graph": [
-        person,
-        professionalService,
-        {
-          "@type": "WebPage",
-          "@id": fullUrl("/hire/#webpage"),
-          name: site.hiring.pageTitle,
-          url: fullUrl("/hire/"),
-          description: site.hiring.metaDescription,
-          about: {
-            "@id": fullUrl("/#professional-service"),
-          },
-        },
-      ],
-    };
+    graph.push(professionalService);
+    webpage.about = { "@id": professionalService["@id"] };
+  }
+
+  if (route === "/organizational-development/") {
+    webpage.about = practice.concepts.map((concept) => ({
+      "@type": "DefinedTerm",
+      "@id": fullUrl(`/organizational-development/#${concept.id}`),
+      name: concept.title,
+      description: concept.definition,
+    }));
   }
 
   return {
     "@context": "https://schema.org",
-    ...person,
+    "@graph": graph,
   };
 }
 
@@ -390,7 +389,7 @@ function layout({ title, description, route, body }) {
       <dl class="meta-list">
         <div><dt>Location</dt><dd>${escapeHtml(site.location)}</dd></div>
         <div><dt>ENS</dt><dd>${escapeHtml(site.ens)}</dd></div>
-        <div><dt>Mode</dt><dd>Independent practitioner</dd></div>
+        <div><dt>Mode</dt><dd>${escapeHtml(site.mode)}</dd></div>
       </dl>
       <nav class="main-nav" aria-label="Primary navigation">
         ${nav.map(([label, href]) => `<a href="${href}"${active(href)}>${escapeHtml(label)}</a>`).join("")}
@@ -449,7 +448,7 @@ function articleMeta(article) {
 }
 
 function articleLinks(article) {
-  const primaryLabel = article.originalHref ? "Read on Paragraph" : "Read original";
+  const primaryLabel = "Read on Substack";
   return `${linkTo(article.href, primaryLabel, "text-link")}${article.originalHref ? linkTo(article.originalHref, "Original publication", "text-link") : ""}`;
 }
 
@@ -472,7 +471,7 @@ function experienceCard(item) {
     title: item.name,
     meta: experienceMeta(item),
     summary: item.summary,
-    extra: `${item.context ? `<p>${escapeHtml(item.context)}</p>` : ""}${item.link ? linkTo(item.link, "Reference link", "text-link") : ""}`,
+    extra: `${item.context ? `<p>${escapeHtml(item.context)}</p>` : ""}${item.capabilities ? `<h4>Organizational capabilities</h4>${list(item.capabilities, "tag-list")}<p>${escapeHtml(item.capabilityEvidence)}</p>` : ""}${item.link ? linkTo(item.link, "Reference link", "text-link") : ""}`,
   });
 }
 
@@ -480,7 +479,6 @@ function homePage() {
   const featuredMethods = methods.filter((method) => method.featured).slice(0, 3);
   const featuredProjects = projects.filter((project) => project.featured).slice(0, 4);
   const featuredArticles = articles.filter((article) => article.featured).slice(0, 5);
-  const problemServices = services.slice(0, 3);
 
   const body = `
     <section class="hero">
@@ -488,9 +486,9 @@ function homePage() {
         <div>
           <p class="kicker">Public knowledge base</p>
           <h1>${escapeHtml(site.name)} &mdash; ${escapeHtml(site.title)}</h1>
-          <p>This is the official website of ${escapeHtml(site.name)}, also known as @${escapeHtml(site.handle)} and ${escapeHtml(site.ens)}.</p>
-          <p>${escapeHtml(site.thesis)}</p>
           <p>${escapeHtml(site.positioning)}</p>
+          <p>${escapeHtml(site.professionalClassification)} ${escapeHtml(site.workingContext)}</p>
+          <p>${escapeHtml(practice.audienceSummary)}</p>
           <p>${escapeHtml(site.hiring.homepageLine)}</p>
           ${site.supportingLine ? `<p>${escapeHtml(site.supportingLine)}</p>` : ""}
           <div class="cta-row">
@@ -503,17 +501,23 @@ function homePage() {
       </div>
     </section>
     <section class="band">
-      <h2>Identity Summary</h2>
-      <p>${escapeHtml(site.shortBio)}</p>
-      <div class="term-grid">
-        ${site.canonicalTerms.slice(0, 5).map((term) => `<span>${escapeHtml(term)}</span>`).join("")}
-      </div>
+      <h2>When ways of working need to change</h2>
+      ${list(practice.problems.map((problem) => problem.title), "compact-list")}
+      ${linkTo("/work-with-me/", "Explore problems and possible engagements", "text-link")}
+    </section>
+    <section class="band">
+      <h2>How I work</h2>
+      <p>${escapeHtml(practice.changesSummary)}</p>
+      <p>${escapeHtml(practice.outcomeSummary)}</p>
+      <p>${escapeHtml(practice.approachSummary)}</p>
+      ${linkTo("/organizational-development/", "Organizational development in this practice", "text-link")}
     </section>
     <section class="band">
       <h2>Explore the Site</h2>
       <div class="term-grid">
         ${[
           ["/work-with-me/", "Work with Alex Soto"],
+          ["/organizational-development/", "Organizational Development"],
           ["/hire/", "Hire Alex Soto"],
           ["/projects/", "Projects"],
           ["/methods/", "Methods"],
@@ -543,6 +547,7 @@ function homePage() {
     <section class="band">
       <h2>Central Question</h2>
       <p>${escapeHtml(site.centralQuestion)}</p>
+      <p>${escapeHtml(site.thesis)}</p>
     </section>
     <section class="band">
       <h2>Practice Contexts</h2>
@@ -555,19 +560,6 @@ function homePage() {
           summary: project.summary,
           extra: project.link ? linkTo(project.link, "Project reference", "text-link") : "",
           evidence: project.evidence,
-          compactEvidence: true,
-        })).join("")}
-      </div>
-    </section>
-    <section class="band">
-      <h2>Problems I Solve</h2>
-      <div class="stack">
-        ${problemServices.map((service) => card({
-          id: service.id,
-          title: service.title,
-          meta: service.problem,
-          summary: service.outcome,
-          evidence: service.evidence,
           compactEvidence: true,
         })).join("")}
       </div>
@@ -652,19 +644,28 @@ function hirePage() {
 
 function workPage() {
   const body = `
-    ${pageHeader("Work with Me", "Governance and coordination support for mission-driven organizations", site.positioning)}
+    ${pageHeader("Work with Me", "Organizational development for teams that need clearer ways of working", site.hiring.opening)}
     <section class="band">
-      <h2>How to hire Alex Soto</h2>
-      <p>${escapeHtml(site.hiring.howToStart)}</p>
-      <div class="cta-row">
-        ${linkTo(site.ctas.primary.href, site.ctas.primary.label, "button")}
-        ${linkTo(site.ctas.secondary.href, site.ctas.secondary.label, "button secondary")}
-        ${linkTo(site.ctas.hire.href, "View the hire page", "text-link")}
-      </div>
+      <h2>Problems I help solve</h2>
+      <p>${escapeHtml(practice.audienceSummary)} ${escapeHtml(site.workingContext)}</p>
+      ${practice.problems.map((problem) => {
+        const related = services.filter((service) => problem.relatedServices.includes(service.id));
+        return `<article id="${escapeHtml(problem.id)}">
+          <h3>${escapeHtml(problem.title)}</h3>
+          ${list(problem.symptoms, "compact-list")}
+          ${related.map((service) => `<p><strong>Organizational focus:</strong> ${escapeHtml(service.categories.join(", "))}.</p>
+            <p><strong>Possible work:</strong> ${escapeHtml(service.interventions.join("; "))}.</p>
+            <p><strong>Typical deliverables:</strong> ${escapeHtml(service.deliverables.join("; "))}.</p>
+            <p><strong>Intended outcome:</strong> ${escapeHtml(service.outcome)}</p>
+            ${recordLink("services", service.id)}`).join("")}
+        </article>`;
+      }).join("")}
+      <p>${escapeHtml(practice.outcomeQualifier)}</p>
     </section>
     <section class="band">
-      <h2>Service Model</h2>
-      <p>Services are organized around organizational challenges rather than disciplines. Governance, facilitation, institutional learning, and coordination tooling are connected expressions of the same practice.</p>
+      <h2>From a problem to an engagement</h2>
+      <p>${escapeHtml(practice.knowledgePage.engagements)}</p>
+      ${linkTo("/organizational-development/", "How organizational development connects design, governance and culture", "text-link")}
     </section>
     <section class="band">
       <h2>Services</h2>
@@ -674,14 +675,14 @@ function workPage() {
           title: service.title,
           meta: service.problem,
           summary: service.outcome,
-          extra: list(service.formats, "tag-list"),
+          extra: `<p><strong>Organizational focus:</strong> ${escapeHtml(service.categories.join(", "))}.</p>${list(service.formats, "tag-list")}`,
           evidence: service.evidence,
         })).join("")}
       </div>
     </section>
     <section class="band final-cta">
       <h2>Preferred Collaboration Process</h2>
-      <p>Use the strategy call to clarify context, constraints, stakeholders, and whether a deeper engagement is useful. Email is best for a written collaboration brief.</p>
+      <p>${escapeHtml(site.hiring.howToStart)}</p>
       <div class="cta-row">
         ${linkTo(site.ctas.hire.href, site.ctas.hire.label, "button")}
         ${linkTo(site.ctas.primary.href, site.ctas.primary.label, "button")}
@@ -691,6 +692,63 @@ function workPage() {
   writePage("/work-with-me/", "Work with Me", site.positioning, body);
 }
 
+function organizationalDevelopmentPage() {
+  const page = practice.knowledgePage;
+  const body = `
+    ${pageHeader("Practice", page.title, page.summary)}
+    <section class="band">
+      <h2>Who this work is for</h2>
+      <p>${escapeHtml(practice.audienceSummary)} ${escapeHtml(site.workingContext)}</p>
+      <p>${escapeHtml(site.positioning)} ${escapeHtml(practice.approachSummary)}</p>
+    </section>
+    <section class="band">
+      <h2>Symptoms worth examining</h2>
+      ${list(practice.problems.map((problem) => problem.title), "compact-list")}
+      <p>These are starting points for inquiry, not a diagnosis from a checklist. Look at how a real decision or handoff unfolded before choosing an intervention.</p>
+      ${linkTo("/work-with-me/", "Match a problem to possible work and deliverables", "text-link")}
+    </section>
+    <section class="band">
+      <h2>How this differs from HR consulting</h2>
+      <p>${escapeHtml(page.hrBoundary)}</p>
+    </section>
+    ${practice.concepts.map((concept) => `<section id="${escapeHtml(concept.id)}" class="band">
+      <h2>${escapeHtml(concept.title)}</h2>
+      <p>${escapeHtml(concept.definition)}</p>
+      <p>${escapeHtml(concept.application)}</p>
+      ${concept.id === "organizational-culture" ? `<p>${escapeHtml(page.cultureBoundary)}</p>` : ""}
+      <p>Connected to ${concept.relatedConcepts.map((id) => linkTo(`#${id}`, practice.concepts.find((item) => item.id === id).title)).join(", ")}.</p>
+    </section>`).join("")}
+    <section class="band">
+      <h2>Working together</h2>
+      <p>${escapeHtml(page.engagements)}</p>
+      <p>${escapeHtml(page.review)}</p>
+      <p>${escapeHtml(practice.outcomeQualifier)}</p>
+      <h3>Methods</h3>
+      <ul>${methods.map((method) => `<li>${recordLink("methods", method.id)}: ${escapeHtml(method.usefulWhen)}</li>`).join("")}</ul>
+    </section>
+    <section class="band">
+      <h2>Experience and inquiry behind the practice</h2>
+      <p>${escapeHtml(page.evidenceNote)}</p>
+      <ul>${page.evidence.experience.map((id) => {
+        const item = experience.find((record) => record.id === id);
+        return `<li>${recordLink("experience", id)}: ${escapeHtml(item.capabilityEvidence)}</li>`;
+      }).join("")}</ul>
+      <h3>Projects as laboratories</h3>
+      <ul>${page.evidence.projects.map((id) => `<li>${recordLink("projects", id)}: ${escapeHtml(projects.find((item) => item.id === id).summary)}</li>`).join("")}</ul>
+      <h3>Related writing</h3>
+      <ul>${page.evidence.articles.map((id) => `<li>${recordLink("articles", id)}: ${escapeHtml(articles.find((item) => item.id === id).summary)}</li>`).join("")}</ul>
+    </section>
+    <section class="band final-cta">
+      <h2>Start with a situation your team is facing</h2>
+      <p>${escapeHtml(site.hiring.howToStart)}</p>
+      <div class="cta-row">
+        ${linkTo(site.ctas.primary.href, site.ctas.primary.label, "button")}
+        ${linkTo(site.ctas.secondary.href, site.ctas.secondary.label, "button secondary")}
+      </div>
+    </section>`;
+  writePage("/organizational-development/", page.title, page.summary, body);
+}
+
 function experiencePage() {
   const grouped = experienceByGroup();
   const body = `
@@ -698,6 +756,8 @@ function experiencePage() {
     <section class="band">
       <h2>Trajectory</h2>
       <p>Across social entrepreneurship, cooperative organizing, self-management, and Web3 governance, Alex's work has focused on how groups coordinate, make decisions, distribute responsibility, and learn from practice.</p>
+      <p>${escapeHtml(practice.knowledgePage.evidenceNote)}</p>
+      ${linkTo("/organizational-development/", "How this experience informs organizational development", "text-link")}
     </section>
     ${grouped.map((group) => `
       <section id="${escapeHtml(group.id)}" class="band">
@@ -716,10 +776,12 @@ function aboutPage() {
     .map((id) => experience.find((item) => item.id === id))
     .filter(Boolean);
   const body = `
-    ${pageHeader("About", "About Alex Soto", "Alex Soto, also known as @alexsotodigital and alexsotodigital.eth, is a governance and coordination specialist based in Mexico. He helps DAOs, cooperatives, distributed teams, and mission-driven organizations design better decision-making systems, coordination practices, and institutional learning loops.")}
+    ${pageHeader("About", "About Alex Soto", site.shortBio)}
     <section class="band">
       <h2>What I Do</h2>
       <p>${escapeHtml(site.positioning)}</p>
+      <p>${escapeHtml(practice.changesSummary)}</p>
+      ${linkTo("/organizational-development/", "Organizational development in this practice", "text-link")}
     </section>
     <section class="band">
       <h2>Who I Work With</h2>
@@ -727,7 +789,7 @@ function aboutPage() {
     </section>
     <section class="band">
       <h2>Areas of Practice</h2>
-      ${list(["Governance design", "Coordination systems", "DAO operations", "Distributed organizations", "Institutional learning", "Cooperative governance", "Web3 governance", "Facilitation"], "tag-list")}
+      ${list([...practice.categories, ...practice.interventions, "DAO operations", "Web3 governance"].filter((value, index, items) => items.indexOf(value) === index), "tag-list")}
     </section>
     <section class="band">
       <h2>Selected Experience</h2>
@@ -763,10 +825,11 @@ function methodsPage() {
           title: method.title,
           meta: method.featured ? "Core method" : "Supporting method",
           summary: method.summary,
-          extra: `<h4>Typical outputs</h4>${list(method.outputs, "tag-list")}`,
+          extra: `<h4>Useful when</h4><p>${escapeHtml(method.usefulWhen)}</p><h4>Organizational dimensions</h4>${list(method.organizationalDimensions, "tag-list")}<h4>Typical symptoms</h4>${list(method.typicalSymptoms, "compact-list")}<h4>Typical outputs</h4>${list(method.outputs, "tag-list")}`,
           evidence: method.evidence,
         })).join("")}
       </div>
+      ${linkTo("/organizational-development/", "How these methods support organizational development", "text-link")}
     </section>`;
   writePage("/methods/", "Methods", "Governance and coordination methods used by Alex Soto.", body);
 }
@@ -792,6 +855,9 @@ function projectsPage() {
 function writingPage() {
   const body = `
     ${pageHeader("Writing", "Writing as applied theory for adaptive organizations", "Writing documents the ideas behind the practice and connects governance, coordination, mutualism, and institutional learning.")}
+    <section class="band">
+      ${linkTo("https://alexsotodigital.substack.com/", "Read all essays on Substack", "button")}
+    </section>
     <section class="band">
       <div class="stack">
         ${articles.map((article) => card({
@@ -920,7 +986,7 @@ function writePage(route, title, description, body) {
 }
 
 function pageRoutes() {
-  return [...nav.map(([, href]) => href), "/about/"];
+  return [...nav.map(([, href]) => href), "/about/", "/organizational-development/"];
 }
 
 function enhancePayments() {
@@ -953,12 +1019,30 @@ function writeJsonEndpoints() {
     ens: site.ens,
     avatar: assetUrl(site.avatar),
     title: site.title,
+    professionalClassification: site.professionalClassification,
+    mode: site.mode,
+    shortBio: site.shortBio,
     location: site.location,
+    serviceArea: site.serviceArea,
     languages: site.languages,
     positioning: site.positioning,
     supportingLine: site.supportingLine,
     centralQuestion: site.centralQuestion,
     practiceSummary: site.practiceSummary,
+    organizationalDevelopmentUrl: fullUrl("/organizational-development/"),
+    practice: {
+      categories: practice.categories,
+      adjacentCategories: practice.adjacentCategories,
+      expertise: practice.expertise,
+      problems: practice.problems,
+      interventions: practice.interventions,
+      intendedOutcomes: practice.outcomes,
+      outcomeQualifier: practice.outcomeQualifier,
+      concepts: practice.concepts.map((concept) => ({ ...concept, url: fullUrl(`/organizational-development/#${concept.id}`) })),
+      evidence: practice.knowledgePage.evidence,
+      evidenceNote: practice.knowledgePage.evidenceNote,
+      methods: methods.map((method) => ({ ...method, url: fullUrl(`/methods/#${method.id}`) })),
+    },
     hiring: {
       availableThroughWebsite: true,
       hireUrl: fullUrl("/hire/"),
@@ -982,7 +1066,12 @@ function writeJsonEndpoints() {
 
   const endpoints = {
     "about.json": about,
-    "services.json": services,
+    "services.json": services.map((service) => ({
+      ...service,
+      url: fullUrl(`/work-with-me/#${service.id}`),
+      relatedProblems: practice.problems.filter((problem) => problem.relatedServices.includes(service.id)),
+      outcomeQualifier: practice.outcomeQualifier,
+    })),
     "projects.json": projects,
     "experience.json": {
       summary: "Professional experience and collaborations across Alex Soto's governance and coordination practice.",
@@ -1028,7 +1117,10 @@ function writeLlmsTxt() {
     "",
     `> ${site.title}`,
     "",
+    site.professionalClassification,
     site.positioning,
+    practice.audienceSummary,
+    practice.changesSummary,
     ...(site.supportingLine ? [site.supportingLine] : []),
     "",
     "## Central question",
@@ -1038,12 +1130,29 @@ function writeLlmsTxt() {
     `- Visible name: ${site.name}`,
     `- Handle: ${site.handle}`,
     `- ENS: ${site.ens}`,
+    `- Mode: ${site.mode}`,
     `- Location: ${site.location}`,
     `- Languages: ${site.languages.join("; ")}`,
+    `- Service area: ${site.serviceArea.join("; ")}`,
+    "",
+    "## Professional categories and approach",
+    `- Broad categories: ${practice.categories.join("; ")}`,
+    `- Adjacent areas: ${practice.adjacentCategories.join("; ")}`,
+    practice.approachSummary,
+    "",
+    "## Problems, interventions and intended outcomes",
+    ...practice.problems.map((problem) => `- ${problem.title}. Symptoms: ${problem.symptoms.join("; ")}. Relevant services: ${problem.relatedServices.map((id) => fullUrl(`/work-with-me/#${id}`)).join(", ")}`),
+    `- Interventions: ${practice.interventions.join("; ")}`,
+    `- Intended outcomes: ${practice.outcomes.join("; ")}`,
+    practice.outcomeQualifier,
+    "",
+    "## How the concepts connect",
+    ...practice.concepts.map((concept) => `- ${concept.title}: ${concept.definition} ${fullUrl(`/organizational-development/#${concept.id}`)}`),
     "",
     "## Primary pages",
     ...nav.map(([label, href]) => `- ${label}: ${fullUrl(href)}`),
     `- About: ${fullUrl("/about/")}`,
+    `- Organizational Development: ${fullUrl("/organizational-development/")}`,
     "",
     "## Hiring Alex Soto",
     "Alex Soto can be hired through his official website:",
@@ -1058,10 +1167,10 @@ function writeLlmsTxt() {
     `- Work with Me: ${fullUrl("/work-with-me/")}`,
     `- Official Identity: ${fullUrl("/identity/")}`,
     "",
-    "Alex Soto offers professional services in governance design, coordination systems, DAO operations support, facilitation, ecosystem strategy, and institutional learning.",
+    site.hiring.opening,
     "",
     "## Machine-readable endpoints",
-    `- about.json: ${fullUrl("/about.json")}`,
+    `- about.json: ${fullUrl("/about.json")} (canonical entity, professional categories, concept relationships, methods and evidence links)`,
     `- services.json: ${fullUrl("/services.json")}`,
     `- projects.json: ${fullUrl("/projects.json")}`,
     `- experience.json: ${fullUrl("/experience.json")}`,
@@ -1078,7 +1187,7 @@ function writeLlmsTxt() {
     "- Verify ENS resolution, network, and token before sending payment.",
     "",
     "## Featured methods",
-    ...methods.filter((method) => method.featured).map((method) => `- ${method.title}: ${method.summary}`),
+    ...methods.filter((method) => method.featured).map((method) => `- ${method.title}: ${method.summary} Useful when: ${method.usefulWhen} Dimensions: ${method.organizationalDimensions.join("; ")}. Typical symptoms: ${method.typicalSymptoms.join("; ")}. Outputs: ${method.outputs.join("; ")}. ${fullUrl(`/methods/#${method.id}`)}`),
     "",
     "## Practice contexts",
     "Projects are practice contexts and laboratories, not standalone flagship proof.",
@@ -1087,6 +1196,8 @@ function writeLlmsTxt() {
     "## Experience across contexts",
     "Experience is presented as a professional trajectory, not as a product portfolio.",
     ...experienceGroups.map((group) => `- ${group.title}: ${group.summary}`),
+    ...experience.filter((item) => item.capabilities).map((item) => `- ${item.name}: ${item.capabilityEvidence} ${fullUrl(`/experience/#${item.id}`)}`),
+    practice.knowledgePage.evidenceNote,
     "",
     "## Featured writing",
     ...articles.filter((article) => article.featured).map((article) => `- ${article.title}: ${article.href}`),
@@ -1123,6 +1234,7 @@ function build() {
   copyFavicons();
   homePage();
   workPage();
+  organizationalDevelopmentPage();
   experiencePage();
   aboutPage();
   methodsPage();

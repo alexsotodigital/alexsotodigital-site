@@ -5,23 +5,28 @@ const site = {
   ens: "alexsotodigital.eth",
   avatar: "/assets/alex-soto-pfp.png",
   title: "Governance & Coordination Specialist",
+  professionalClassification: "Independent organizational development, governance, and coordination consultant.",
+  mode: "Independent consultant / independent practitioner",
   location: "Mexico (Chiapas) / LATAM (Remote)",
+  serviceArea: ["Mexico", "Latin America", "International (remote)"],
+  workingContext: "Based in Mexico / LATAM, working remotely and internationally in Spanish and English.",
   languages: ["Spanish (native)", "English (professional working proficiency)"],
   thesis:
     "Organizations become more resilient when they can coordinate effectively, make better decisions together, and continuously adapt through institutional learning.",
   positioning:
-    "I help mission-driven organizations turn coordination challenges, disagreement, and distributed work into governance systems, shared practices, clearer decisions, and institutional learning loops.",
+    "I help teams organize themselves to make better decisions.",
   supportingLine: "",
   centralQuestion:
     "How can distributed organizations learn systematically from their own experience so they can adapt without losing legitimacy, clarity, or momentum?",
-  shortBio:
-    "Alex Soto is a governance and coordination specialist helping distributed organizations make decisions, process tensions, and learn from experience over time.",
   philosophy:
     "The site documents a professional practice shaped by research, facilitation, governance design, ecosystem contributions, experimentation, and reflective learning.",
   practiceSummary:
     "Alex works at the intersection of theory and practice: studying, designing, facilitating, and experimenting with governance and coordination across multiple contexts, then translating accumulated lessons into methods other organizations can apply.",
   canonicalTerms: [
     "Governance & Coordination Specialist",
+    "Organizational Development",
+    "Organizational Effectiveness",
+    "Organization Design",
     "Mission-driven organizations",
     "Distributed teams",
     "Institutional learning",
@@ -33,6 +38,10 @@ const site = {
   ],
   audiences: [
     "Mission-driven organizations",
+    "Growing teams",
+    "Distributed and remote teams",
+    "Nonprofits",
+    "Cooperatives",
     "Impact DAOs",
     "Ecosystem foundations",
     "Web3 startups",
@@ -54,11 +63,7 @@ const site = {
   },
   hiring: {
     title: "Hire Alex Soto",
-    pageTitle: "Hire Alex Soto | Governance & Coordination Consulting",
-    metaDescription:
-      "Hire Alex Soto through his official website for governance design, coordination systems, facilitation, DAO operations support, ecosystem strategy, and institutional learning. Book a strategy call or email a collaboration brief.",
-    opening:
-      "You can hire Alex Soto through this website for governance design, coordination systems, facilitation, DAO operations support, ecosystem strategy, and institutional learning work.",
+    pageTitle: "Hire Alex Soto | Organizational Development & Governance",
     howToStart:
       "The recommended first step is to book a strategy call through Calendly. If you prefer to share written context first, email a collaboration brief describing your organization, the coordination or governance challenge, stakeholders involved, timeline, and desired support.",
     homepageLine:
@@ -91,6 +96,9 @@ const site = {
       },
     ],
     goodFit: [
+      "Mission-driven organizations",
+      "Growing and distributed teams",
+      "Nonprofits and cooperatives",
       "DAOs",
       "Web3 teams",
       "Ecosystem foundations",
@@ -104,6 +112,114 @@ const site = {
       "Projects without a real governance, coordination, learning, or organizational design need",
     ],
   },
+};
+
+site.shortBio = `${site.name} is an ${site.professionalClassification.charAt(0).toLowerCase()}${site.professionalClassification.slice(1)} ${site.workingContext}`;
+site.hiring.metaDescription = `${site.professionalClassification} Based in Mexico, working internationally. Book a strategy call or email a collaboration brief.`;
+site.hiring.opening = "Work with Alex on organizational development through governance design, coordination systems, facilitation and institutional learning. Engagements start with a concrete problem in how your team works; DAO operations and ecosystem strategy remain part of the practice.";
+
+const practice = {
+  categories: ["Organizational Development", "Organizational Effectiveness", "Organization Design"],
+  adjacentCategories: ["Organizational Culture", "Governance", "Coordination", "Team Effectiveness", "Facilitation", "Decision-making", "Institutional Learning", "Distributed Organizations"],
+  expertise: ["Decision rights", "Distributed authority", "Role clarity", "Accountability", "Governance design", "Organizational coordination", "Facilitation", "Organizational learning", "Psychological safety as an organizational condition", "Self-management", "Distributed teams"],
+  audienceSummary: "I work with mission-driven, growing and distributed organizations, including nonprofits, cooperatives, leadership teams and Web3 ecosystems.",
+  changesSummary: "The work makes decision rights, roles, consultation boundaries and operating rhythms explicit. Governance reviews, coordination diagnostics and facilitated conversations help teams turn recurring tensions into practices they can test and revise.",
+  outcomeSummary: "The aim is clearer decisions, stronger ownership and shared accountability: teams can act with more autonomy, coordinate interdependent work and learn from what happens.",
+  approachSummary: "My approach connects research with facilitation and experiments in self-management. Institutional learning means reviewing real decisions and tensions, then adapting the roles, rules and practices that produced them.",
+  interventions: ["Governance design", "Organizational diagnostics", "Coordination systems", "Facilitation", "Decision frameworks", "Role and responsibility clarification", "Operating rhythms", "Institutional learning", "Organization design"],
+  outcomes: ["Clearer decisions", "Stronger ownership", "Distributed responsibility", "Greater autonomy with accountability", "Better collaboration", "Fewer recurring coordination failures", "Stronger organizational culture", "Increased organizational effectiveness", "Better strategic alignment"],
+  outcomeQualifier: "Intended outcomes to define and review with each organization, not guaranteed or independently measured client results.",
+  problems: [
+    {
+      id: "decision-bottlenecks",
+      title: "Decisions are too slow or depend on one person",
+      symptoms: ["Founders or leaders approve routine decisions", "Decision rights and consultation boundaries are unclear"],
+      relatedServices: ["governance-design"],
+    },
+    {
+      id: "unclear-ownership",
+      title: "Roles exist but ownership is unclear",
+      symptoms: ["Responsibilities overlap or fall between roles", "Handoffs stall because nobody owns the next step"],
+      relatedServices: ["coordination-systems"],
+    },
+    {
+      id: "meetings-without-resolution",
+      title: "Meetings consume attention without resolving tensions",
+      symptoms: ["The same disagreement returns without a decision", "Stakeholders leave meetings with different expectations"],
+      relatedServices: ["facilitation-conflict-resolution"],
+    },
+    {
+      id: "autonomy-accountability",
+      title: "The team wants more autonomy without losing accountability",
+      symptoms: ["People are asked to take ownership without clear authority", "Decisions are reversed without an agreed review process"],
+      relatedServices: ["governance-design"],
+    },
+    {
+      id: "growth-friction",
+      title: "Growth or change has exposed organizational friction",
+      symptoms: ["Growth has outpaced roles and working agreements", "Remote teams rely on extra meetings to compensate for missing coordination practices"],
+      relatedServices: ["coordination-systems"],
+    },
+  ],
+  knowledgePage: {
+    title: "Organizational Development for Growing and Distributed Teams",
+    summary: "In my practice, organizational development means helping teams change how they make decisions, distribute responsibility and learn from experience. Governance and coordination are the practical systems through which that change takes place.",
+    hrBoundary: "This work focuses on how people organize together, rather than HR administration, payroll or recruitment. It can complement a people or HR team's work: for example, clarifying who can make a decision and how concerns are heard, rather than changing a job title alone.",
+    cultureBoundary: "Psychological safety matters here as an organizational condition: can people raise a concern, admit uncertainty or challenge a decision without being punished? Facilitation can make tensions discussable, but it also takes clear authority, fair review and follow-through. A workshop alone cannot establish that condition.",
+    engagements: "An engagement can begin with a diagnostic or governance review, followed by facilitated working sessions to clarify roles, decision boundaries and meeting practices. Ongoing consulting or fractional support can help the team try those changes and review what it learns. Scope, deliverables and signs of progress are agreed before work begins.",
+    review: "Review progress against the original problem: which decisions still wait for a founder, which handoffs lack an owner, and which tensions keep returning? Organizational effectiveness is assessed in the team's actual work, not assumed from adopting a framework.",
+    evidenceNote: "These records describe activities and contexts reported in the practice. External references are included where available; they are not a set of independently measured client outcomes or new credentials.",
+    evidence: {
+      experience: ["covive", "sociocracy-practica", "ouitopia", "alexsotodigital-practice", "matriz-experience"],
+      methods: ["governance-reviews", "coordination-diagnostics", "facilitation-decision-frameworks", "institutional-learning"],
+      projects: ["matriz", "concordia"],
+      articles: ["minimum-viable-institution", "power-of-decentralization", "carework-heart-good-governance"],
+    },
+  },
+  concepts: [
+    {
+      id: "organizational-development",
+      title: "Organizational Development",
+      definition: "A change and capacity-building practice that helps an organization adapt how it works, using its own experience as a source of learning.",
+      application: "Start with a recurring problem, work with the people involved to make changes, and review the consequences. In this practice, organization design and governance provide concrete ways to change; effectiveness helps assess progress.",
+      relatedConcepts: ["organization-design", "governance", "organizational-effectiveness"],
+    },
+    {
+      id: "organization-design",
+      title: "Organization Design",
+      definition: "How roles, authority, structures, decision rights, interfaces and workflows are intentionally arranged.",
+      application: "An organization chart does not explain who can decide, who needs consultation or how work crosses team boundaries. Map those relationships and adjust them when responsibility and authority do not match. Governance makes the decision rules explicit; coordination puts them to work.",
+      relatedConcepts: ["governance", "coordination"],
+    },
+    {
+      id: "organizational-effectiveness",
+      title: "Organizational Effectiveness",
+      definition: "Whether an organization reliably turns its purpose and strategy into coordinated action.",
+      application: "A faster meeting is not enough if decisions never reach execution. Review whether decisions have owners, roles can act and teams follow through. This is how a design or governance change can be evaluated against the organization's purpose.",
+      relatedConcepts: ["organization-design", "coordination"],
+    },
+    {
+      id: "organizational-culture",
+      title: "Organizational Culture",
+      definition: "Recurring norms and behaviors shaped by how people experience authority, trust, decisions, incentives and collaboration.",
+      application: "Culture appears in what happens when someone disagrees or asks for help. If all decisions quietly return to a founder, a stated value of autonomy has little force. Changes to authority, consultation and review practices can support different everyday behaviors.",
+      relatedConcepts: ["governance", "organization-design"],
+    },
+    {
+      id: "governance",
+      title: "Governance",
+      definition: "The explicit structures and processes through which authority, decisions and accountability are organized.",
+      application: "Clarify who decides, whose input is needed, how a decision is recorded and when it can be revisited. Governance supports autonomy when people understand their decision boundaries and how to address tensions within them.",
+      relatedConcepts: ["organization-design", "organizational-culture"],
+    },
+    {
+      id: "coordination",
+      title: "Coordination",
+      definition: "How interdependent work is synchronized across people, roles and teams.",
+      application: "Make handoffs, dependencies, working rhythms and responsibility visible. When a failure repeats, review the shared practice behind it rather than relying on more reminders. These learning loops connect everyday work to organizational development.",
+      relatedConcepts: ["organizational-development", "organizational-effectiveness"],
+    },
+  ],
 };
 
 const links = [
@@ -172,10 +288,10 @@ const links = [
     purpose: ["contact"],
   },
   {
-    id: "paragraph",
-    label: "Paragraph",
+    id: "substack",
+    label: "Substack",
     value: "@alexsotodigital",
-    href: "https://paragraph.xyz/@alexsotodigital",
+    href: "https://alexsotodigital.substack.com/",
     priority: "secondary",
     purpose: ["writing"],
   },
@@ -239,6 +355,8 @@ const experience = [
     status: "Current",
     cluster: "cooperative-organizational-design",
     summary: "Independent consulting practice focused on agile project management, distributed governance, impact measurement, strategic planning, hybrid model design, team facilitation, and OKRs.",
+    capabilities: ["Organizational Development", "Organization Design", "Governance design", "Facilitation"],
+    capabilityEvidence: "Distributed governance, hybrid model design and team facilitation connect organizational structure with how teams plan and work together. This is the organizational-development dimension of the independent practice.",
     evidenceFor: ["governance-design", "coordination-diagnostics", "facilitation-decision-frameworks"],
     link: "https://app.ens.domains/alexsotodigital.eth",
   },
@@ -298,6 +416,8 @@ const experience = [
     cluster: "cooperative-organizational-design",
     summary: "Built a cooperative network supporting freelancers and early-stage teams, designed governance systems combining reputation, coordination, and shared services, and developed economic models around contribution-based incentives and shared infrastructure.",
     context: "Matriz is shared infrastructure for independent workers who want to collaborate cooperatively and mutualize operational costs.",
+    capabilities: ["Organization Design", "Governance design", "Coordination", "Institutional Learning"],
+    capabilityEvidence: "Designing cooperative governance and contribution systems provides an ongoing laboratory for roles, authority, shared infrastructure and learning from coordination tensions.",
     evidenceFor: ["coordination-diagnostics", "institutional-learning", "ecosystem-strategy"],
     link: "https://matriz.coop/",
   },
@@ -310,6 +430,8 @@ const experience = [
     status: "Past",
     cluster: "cooperative-organizational-design",
     summary: "Facilitated collaborative teams, supported organizations working with self-management systems, designed and systematized methodologies, and facilitated in-person, virtual, and hybrid meetings and events.",
+    capabilities: ["Team Effectiveness", "Facilitation", "Self-management", "Organization Design"],
+    capabilityEvidence: "Facilitation and support for self-management connected team interactions with their ways of organizing. Systematizing methods made those practices reusable.",
     evidenceFor: ["facilitation-decision-frameworks", "institutional-learning"],
     link: "https://es.glassfrog.com/org/26543/people/466900",
   },
@@ -322,6 +444,8 @@ const experience = [
     status: "Past",
     cluster: "cooperative-organizational-design",
     summary: "Contributed to Sociocracia Practica, part of Sociocracy For All, supporting workshops, accompaniment, educational materials, and spaces to practice sociocracy in the Spanish-speaking world.",
+    capabilities: ["Organizational Development", "Governance", "Facilitation", "Self-management"],
+    capabilityEvidence: "Workshops, educational materials and accompaniment supported learning and practicing sociocratic governance. This connects organizational development with participation and self-management.",
     evidenceFor: ["facilitation-decision-frameworks", "institutional-learning"],
   },
   {
@@ -344,6 +468,8 @@ const experience = [
     status: "Past",
     cluster: "cooperative-organizational-design",
     summary: "Implemented agile ways of working to improve delivery and learning cycles, mapped organizational roles, and introduced more autonomous and democratic decision-making practices across teams.",
+    capabilities: ["Organizational Culture", "Organization Design", "Distributed decision-making", "Organizational Development"],
+    capabilityEvidence: "Role mapping is evidence of organization-design work; agile learning cycles and autonomous decision practices connect organizational culture to how work and authority are arranged.",
     evidenceFor: ["coordination-diagnostics", "institutional-learning"],
   },
   {
@@ -442,6 +568,9 @@ const methods = [
     title: "Governance Reviews",
     featured: true,
     summary: "Assess how decisions are proposed, discussed, approved, executed, and converted into organizational learning.",
+    organizationalDimensions: ["Governance", "Organization Design", "Decision rights", "Accountability"],
+    usefulWhen: "The team needs to clarify who can decide, who should be consulted and how decisions can be reviewed.",
+    typicalSymptoms: ["Decisions repeatedly stall", "Authority is ambiguous", "Routine decisions return to a founder or a few leaders"],
     outputs: ["Governance map", "decision-flow diagnosis", "learning backlog"],
     relatedServices: ["governance-design", "dao-operations"],
     evidence: {
@@ -455,6 +584,9 @@ const methods = [
     title: "Coordination Diagnostics",
     featured: true,
     summary: "Identify repeated failure patterns across roles, incentives, rituals, handoffs, and accountability loops.",
+    organizationalDimensions: ["Organizational Effectiveness", "Organization Design", "Coordination", "Team Effectiveness"],
+    usefulWhen: "Growth or distributed work has made dependencies and ownership difficult to see.",
+    typicalSymptoms: ["Handoffs lack an owner", "Responsibilities overlap", "The same coordination failures recur despite extra meetings"],
     outputs: ["coordination map", "tension register", "learning-loop recommendations"],
     relatedServices: ["coordination-systems", "ecosystem-strategy"],
     evidence: {
@@ -468,8 +600,11 @@ const methods = [
     title: "Facilitation & Decision Frameworks",
     featured: true,
     summary: "Design and facilitate conversations that make tensions explicit and translate disagreement into criteria, decisions, and next steps.",
+    organizationalDimensions: ["Facilitation", "Decision-making", "Organizational Culture", "Team Effectiveness"],
+    usefulWhen: "People need a structured way to raise tensions, hear different perspectives and reach an actionable decision.",
+    typicalSymptoms: ["Meetings end without decisions", "Stakeholders disagree on criteria", "Concerns surface only after a decision is made"],
     outputs: ["session design", "decision criteria", "decision records"],
-    relatedServices: ["facilitation-conflict-resolution", "strategic-planning"],
+    relatedServices: ["facilitation-conflict-resolution"],
     evidence: {
       projects: ["matriz"],
       experience: ["ouitopia", "alexsotodigital-practice"],
@@ -481,8 +616,11 @@ const methods = [
     title: "Institutional Learning",
     featured: false,
     summary: "Turn recurring tensions, retrospectives, and operational lessons into reusable institutional memory.",
+    organizationalDimensions: ["Organizational Development", "Institutional Learning", "Organizational Effectiveness"],
+    usefulWhen: "The team needs to turn what it learns into changes to roles, rules and shared practices.",
+    typicalSymptoms: ["Retrospectives produce no follow-through", "Lessons disappear when people leave", "Old tensions resurface without changes to working agreements"],
     outputs: ["learning loops", "retrospective formats", "knowledge artifacts"],
-    relatedServices: ["coordination-systems", "research-sprints"],
+    relatedServices: ["coordination-systems"],
     evidence: {
       projects: ["matriz"],
       experience: ["matriz-experience", "ouitopia"],
@@ -496,6 +634,9 @@ const services = [
     id: "governance-design",
     title: "Governance Design",
     problem: "Decision bottlenecks and governance confusion",
+    categories: ["Organizational Development", "Organization Design", "Governance"],
+    interventions: ["Decision-rights mapping", "Authority and consultation boundaries", "Governance review and review mechanisms"],
+    deliverables: ["Governance map", "Decision-rights and accountability agreements", "Decision review process"],
     outcome: "Clear governance structures, explicit decision rights, and better learning from decisions.",
     formats: ["Governance review", "workshop", "ongoing consulting"],
     evidence: {
@@ -509,6 +650,9 @@ const services = [
     id: "coordination-systems",
     title: "Coordination Systems",
     problem: "Poor coordination across distributed teams",
+    categories: ["Organizational Development", "Organization Design", "Organizational Effectiveness"],
+    interventions: ["Coordination diagnostic", "Role and responsibility clarification", "Operating-rhythm and handoff design"],
+    deliverables: ["Role and coordination map", "Working agreements", "Learning-loop recommendations"],
     outcome: "Better operating rhythms, clearer roles, and explicit loops for learning from coordination failures.",
     formats: ["Coordination diagnostic", "research sprint", "fractional support"],
     evidence: {
@@ -522,6 +666,9 @@ const services = [
     id: "facilitation-conflict-resolution",
     title: "Facilitation & Conflict Resolution",
     problem: "Conflict, ambiguity, or stakeholder misalignment",
+    categories: ["Facilitation", "Team Effectiveness", "Organizational Culture"],
+    interventions: ["Facilitated working sessions", "Decision criteria and protocols", "Meeting redesign and explicit follow-through"],
+    deliverables: ["Session design", "Shared decision criteria", "Decision records and next steps"],
     outcome: "Productive friction, shared criteria, and decisions people can understand, execute, and revisit.",
     formats: ["Facilitation session", "organizational retreat", "strategy call"],
     evidence: {
@@ -535,6 +682,9 @@ const services = [
     id: "ecosystem-strategy",
     title: "Ecosystem Strategy",
     problem: "Ecosystem complexity and unclear incentives",
+    categories: ["Organizational Effectiveness", "Coordination", "Governance"],
+    interventions: ["Stakeholder and incentive mapping", "Program alignment", "Governance and coordination review"],
+    deliverables: ["Ecosystem coordination map", "Strategic priorities", "Feedback and review recommendations"],
     outcome: "Better alignment between contributors, programs, incentives, governance processes, and learning feedback.",
     formats: ["Strategy call", "research sprint", "ongoing consulting"],
     evidence: {
@@ -548,6 +698,9 @@ const services = [
     id: "dao-operations",
     title: "DAO Operations Support",
     problem: "Scaling distributed governance and operations",
+    categories: ["Governance", "Coordination", "Distributed Organizations"],
+    interventions: ["Proposal-workflow review", "Contribution-path clarification", "Governance operations support"],
+    deliverables: ["Proposal workflow", "Contribution guidelines", "Operational review backlog"],
     outcome: "More reliable governance operations, clearer contribution paths, and better learning from proposal workflows.",
     formats: ["Fractional support", "research sprint", "ongoing consulting"],
     evidence: {
@@ -642,8 +795,8 @@ const articles = [
     featured: true,
     currentPractice: true,
     theme: "Institutional Learning",
-    source: "Paragraph",
-    href: "https://paragraph.com/@alexsotodigital/the-minimum-viable-institution",
+    source: "Substack",
+    href: "https://alexsotodigital.substack.com/p/the-minimum-viable-institution",
     summary: "A representative piece of the current practice: how organizations can create just enough shared structure to coordinate, learn, and adapt without becoming rigid.",
     evidenceFor: ["institutional-learning", "coordination-systems", "governance-design"],
   },
@@ -652,8 +805,8 @@ const articles = [
     title: "The Power of Decentralization; and the Decentralization of Power",
     featured: true,
     theme: "Governance",
-    source: "Paragraph",
-    href: "https://paragraph.com/@alexsotodigital/the-power-of-decentralization%3B-and-the-decentralization-of-power?referrer=0x3cd5fEC7FA9827cf0d262D6be5421A61CF615794",
+    source: "Substack",
+    href: "https://alexsotodigital.substack.com/p/the-power-of-decentralization-and",
     summary: "A reflection on decentralization as a political and organizational question: how power, legitimacy, and learning are distributed.",
     evidenceFor: ["governance-design", "facilitation-decision-frameworks"],
   },
@@ -662,8 +815,8 @@ const articles = [
     title: "Mutualism in the Web3 Era",
     featured: true,
     theme: "Mutualism",
-    source: "Paragraph",
-    href: "https://paragraph.com/@alexsotodigital/mutualism-in-the-web3-era?referrer=0x3cd5fEC7FA9827cf0d262D6be5421A61CF615794",
+    source: "Substack",
+    href: "https://alexsotodigital.substack.com/p/mutualism-in-the-web3-era",
     summary: "An exploration of mutualist economics, shared infrastructure, and cooperative learning in Web3 contexts.",
     evidenceFor: ["coordination-systems", "institutional-learning"],
   },
@@ -672,8 +825,8 @@ const articles = [
     title: "Toward a Value-Based Compensation System for DAOs",
     featured: true,
     theme: "DAOs",
-    source: "Paragraph",
-    href: "https://paragraph.com/@alexsotodigital/toward-a-value-based-compensation-system-for-daos?referrer=0x3cd5fEC7FA9827cf0d262D6be5421A61CF615794",
+    source: "Substack",
+    href: "https://alexsotodigital.substack.com/p/toward-a-value-based-compensation",
     summary: "A proposal-oriented article about contribution, compensation, value, accountability, and feedback in DAO systems.",
     evidenceFor: ["governance-design", "dao-operations", "ecosystem-strategy"],
   },
@@ -682,8 +835,8 @@ const articles = [
     title: "For Development Without Destruction",
     featured: true,
     theme: "Institutional Learning",
-    source: "Paragraph",
-    href: "https://paragraph.com/@alexsotodigital/for-development-without-destruction?referrer=0x3cd5fEC7FA9827cf0d262D6be5421A61CF615794",
+    source: "Substack",
+    href: "https://alexsotodigital.substack.com/p/for-development-without-destruction",
     summary: "A piece on development, care, and the need for adaptive progress that does not destroy the systems it depends on.",
     evidenceFor: ["institutional-learning", "coordination-systems"],
   },
@@ -692,8 +845,8 @@ const articles = [
     title: "Carework: The heart of good governance",
     featured: false,
     theme: "Governance as Care Work",
-    source: "Paragraph repost, July 2026 / DisCO.coop Stories, May 2023",
-    href: "https://paragraph.com/@alexsotodigital/carework",
+    source: "Substack repost, July 2026 / DisCO.coop Stories, May 2023",
+    href: "https://alexsotodigital.substack.com/p/carework",
     originalHref: "https://www.disco.coop/2023/05/carework-the-heart-of-good-governance/",
     summary: "Care work is at the heart of good governance for any collective. The article explores how caring processes often require time and attention that may not directly serve individual output, but are essential for the health and coordination of the organization as a whole.",
     evidenceFor: ["institutional-learning"],
@@ -703,7 +856,7 @@ const articles = [
 const faq = [
   {
     question: "What does Alex Soto do?",
-    answer: "Alex Soto helps mission-driven organizations design governance and coordination systems that make decisions, tensions, and learning more explicit over time.",
+    answer: `${site.shortBio} His work focuses on decision rights, roles, governance, coordination and institutional learning for mission-driven, growing and distributed organizations.`,
   },
   {
     question: "Does Alex Soto work with DAOs?",
@@ -715,7 +868,7 @@ const faq = [
   },
   {
     question: "Does Alex Soto work remotely?",
-    answer: "Yes. Alex works from Mexico / LATAM with remote-first organizations.",
+    answer: `Yes. ${site.workingContext}`,
   },
   {
     question: "Does Alex Soto work in English and Spanish?",
@@ -741,6 +894,7 @@ const faq = [
 
 module.exports = {
   site,
+  practice,
   links,
   payments,
   experience,
