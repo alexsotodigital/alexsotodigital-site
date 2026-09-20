@@ -229,6 +229,136 @@ dd code {
   max-width: var(--measure);
 }
 
+.pixel-flower {
+  display: block;
+  flex: 0 0 auto;
+  width: clamp(18px, 5cqw, 30px);
+  height: auto;
+  aspect-ratio: 1;
+  opacity: 0.40;
+  margin-bottom: -1px;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.garden-divider {
+  container-type: inline-size;
+  height: 52px;
+  max-width: var(--measure);
+  margin: 1.5rem auto;
+  padding: 0 4px 4px;
+  position: relative;
+  pointer-events: none;
+  user-select: none;
+}
+
+.garden-plants {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  align-items: end;
+  height: 100%;
+}
+
+.garden-patch {
+  display: flex;
+  align-items: flex-end;
+  justify-self: start;
+  gap: 2px;
+  min-width: 0;
+}
+
+.garden-patch:nth-child(even) { justify-self: center; }
+.garden-patch:last-of-type { justify-self: end; }
+.garden-patch:nth-child(3n) > .pixel-flower:first-child { width: clamp(20px, 5cqw, 32px); }
+.garden-coral { filter: hue-rotate(40deg); }
+.garden-teal { filter: hue-rotate(-30deg); }
+
+.garden-foliage {
+  width: clamp(12px, 3cqw, 20px);
+  margin-bottom: -3px;
+  opacity: 0.28;
+}
+
+.garden-patch:nth-child(even) .garden-foliage { transform: scaleX(-1); }
+
+.garden-shoot {
+  display: block;
+  position: relative;
+  flex: 0 0 12px;
+  height: 13px;
+  color: var(--teal);
+  opacity: 0.30;
+}
+
+.garden-shoot::before {
+  content: "";
+  position: absolute;
+  left: 6px;
+  bottom: 0;
+  width: 2px;
+  height: 10px;
+  background: currentColor;
+}
+
+.garden-shoot::after {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 4px;
+  width: 4px;
+  height: 2px;
+  background: currentColor;
+  box-shadow: -2px -2px 0 currentColor, 6px -2px 0 currentColor, 8px -4px 0 currentColor;
+}
+
+.garden-ground {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 8px;
+  fill: none;
+  stroke: var(--teal);
+  stroke-width: 1;
+  opacity: 0.30;
+}
+
+.garden-footer {
+  margin-top: 2.5rem;
+}
+
+.garden-insect {
+  position: absolute;
+  bottom: 32px;
+  width: 24px;
+  height: 16px;
+  opacity: 0.40;
+  image-rendering: pixelated;
+}
+
+.garden-bee { left: 28%; }
+.garden-dragonfly { left: 71%; }
+
+@container (max-width: 560px) {
+  .garden-plants { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .garden-patch:nth-child(n+7) { display: none; }
+}
+
+@container (max-width: 400px) {
+  .garden-plants { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .garden-patch:nth-child(n+6) { display: none; }
+}
+
+.rate-line {
+  color: var(--accent-dark);
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+#this-is-my-why h3 {
+  font-size: 1.05rem;
+  margin: 1.75rem 0 0.75rem;
+}
+
 .band h2 {
   border-bottom: 1px solid var(--border);
   font-size: 1rem;
@@ -441,6 +571,37 @@ dd code {
   margin-top: 0.8rem;
 }
 
+.email-contact {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.email-contact summary {
+  cursor: pointer;
+  color: var(--accent-dark);
+  overflow-wrap: anywhere;
+}
+
+.email-contact summary:hover {
+  text-decoration: underline;
+}
+
+.email-options {
+  display: grid;
+  justify-items: start;
+  gap: 0.6rem;
+  margin-top: 0.6rem;
+  padding: 0.65rem 0;
+  border-top: 1px solid var(--border);
+  font-size: 0.9rem;
+  overflow-wrap: anywhere;
+}
+
+.email-options .copy-button {
+  margin-left: 0;
+  min-width: 6rem;
+}
+
 .action-panel,
 .link-panel {
   margin-bottom: 1.5rem;
@@ -528,6 +689,21 @@ code {
   .rail-left {
     border-bottom: 1px solid var(--border);
   }
+
+  .brand {
+    display: grid;
+    grid-template-columns: 96px minmax(0, 1fr);
+    gap: 0.2rem 1rem;
+  }
+
+  .pfp-rail {
+    grid-row: 1 / span 2;
+    width: 96px;
+    margin-bottom: 0;
+  }
+
+  .brand span { align-self: end; }
+  .brand small { align-self: start; }
 
   .main-nav {
     grid-template-columns: repeat(2, minmax(0, 1fr));

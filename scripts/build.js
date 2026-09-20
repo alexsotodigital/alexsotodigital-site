@@ -1,4 +1,5 @@
 const fs = require("fs");
+const { createHash } = require("crypto");
 const path = require("path");
 const {
   site,
@@ -17,9 +18,11 @@ const {
 const root = path.join(__dirname, "..");
 const outDir = path.join(root, "dist");
 const configuredSiteUrl = normalizeSiteUrl(process.env.SITE_URL || site.baseUrl || "");
+const officialLinks = links.filter((link) => link.id !== "email");
 
 const nav = [
   ["Home", "/"],
+  ["About Alex Soto", "/about/"],
   ["Hire", "/hire/"],
   ["Work with Me", "/work-with-me/"],
   ["Experience", "/experience/"],
@@ -116,7 +119,24 @@ function slugPath(route) {
 }
 
 function linkTo(href, label, className = "") {
+  if (href.startsWith("mailto:")) return emailContact(href, label, className);
   return `<a${className ? ` class="${className}"` : ""} href="${escapeHtml(href)}">${escapeHtml(label)}</a>`;
+}
+
+function emailContact(href, label, className = "") {
+  const mailto = new URL(href);
+  const address = decodeURIComponent(mailto.pathname);
+  const gmail = new URL("https://mail.google.com/mail/");
+  gmail.search = new URLSearchParams({ view: "cm", fs: "1", to: address, su: mailto.searchParams.get("subject") || "" });
+  return `<details class="email-contact">
+    <summary${className ? ` class="${escapeHtml(className)}"` : ""}>${escapeHtml(label)}</summary>
+    <div class="email-options">
+      <span>${escapeHtml(address)}</span>
+      <a href="${escapeHtml(gmail.href)}" target="_blank" rel="noopener noreferrer">Write in Gmail</a>
+      <a href="${escapeHtml(href)}">Open email app</a>
+      ${copyButton(address, "Copy email")}
+    </div>
+  </details>`;
 }
 
 function normalizeSiteUrl(value) {
@@ -150,6 +170,11 @@ function list(items, className = "") {
   return `<ul${className ? ` class="${className}"` : ""}>${items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>`;
 }
 
+function experienceHref(id) {
+  const route = experienceGroups.some((group) => group.items.includes(id)) ? "/experience/" : "/about/";
+  return `${route}#${id}`;
+}
+
 function recordLink(type, id) {
   const map = {
     services: [services, "/work-with-me/"],
@@ -161,7 +186,7 @@ function recordLink(type, id) {
   const [collection, href] = map[type] || [];
   const record = collection?.find((item) => item.id === id);
   if (!record) return "";
-  return linkTo(`${href}#${id}`, record.title || record.name);
+  return linkTo(type === "experience" ? experienceHref(id) : `${href}#${id}`, record.title || record.name);
 }
 
 function evidenceList(evidence, options = {}) {
@@ -198,6 +223,22 @@ function friendlyEvidenceType(type) {
   return labels[type] || type;
 }
 
+function facilitationPriceSpecification() {
+  const pricing = site.hiring.pricing;
+  return {
+    "@type": "UnitPriceSpecification",
+    priceType: pricing.priceType,
+    priceCurrency: pricing.currency,
+    minPrice: pricing.hourlyRate.min,
+    maxPrice: pricing.hourlyRate.max,
+    unitText: pricing.billingUnit,
+    referenceQuantity: { "@type": "QuantitativeValue", value: 1, unitText: pricing.billingUnit },
+    eligibleQuantity: { "@type": "QuantitativeValue", minValue: pricing.minimumBillableHours, unitText: pricing.billingUnit },
+    valueAddedTaxIncluded: false,
+    description: `${pricing.rateContext} ${pricing.scopeNote} Includes: ${pricing.includes.join(", ")}. Quoted separately: ${pricing.projectOrPackageScope.join(", ")}. ${pricing.longerEngagements.description} ${pricing.proBono.description} Additional costs: ${pricing.exclusions.join(", ")}.`,
+  };
+}
+
 function jsonLdForPage(route) {
   const contactPoint = {
     "@type": "ContactPoint",
@@ -220,7 +261,7 @@ function jsonLdForPage(route) {
     url: fullUrl("/"),
     knowsAbout: [...new Set([...practice.categories, ...practice.adjacentCategories, ...practice.expertise, "DAO operations", "Web3 governance"])],
     contactPoint,
-    sameAs: links.filter((link) => link.href.startsWith("https://") && link.id !== "calendly").map((link) => link.href),
+    sameAs: links.filter((link) => link.href.startsWith("https://") && !link.purpose.includes("strategy call") && !link.purpose.includes("project")).map((link) => link.href),
   };
   const professionalService = {
     "@type": "Service",
@@ -303,6 +344,7 @@ function jsonLdForPage(route) {
         name: "Organizational development, governance and coordination services",
         itemListElement: services.map((service) => ({
           "@type": "Offer",
+          ...(service.id === site.hiring.pricing.serviceId ? { priceSpecification: facilitationPriceSpecification() } : {}),
           itemOffered: {
             "@type": "Service",
             "@id": fullUrl(`/work-with-me/#${service.id}`),
@@ -322,6 +364,20 @@ function jsonLdForPage(route) {
 
   if (route === "/hire/") {
     graph.push(professionalService);
+    graph.push({
+      "@type": "Offer",
+      "@id": fullUrl("/hire/#facilitation-pricing"),
+      name: "Session facilitation: indicative pricing",
+      url: fullUrl("/hire/#facilitation-pricing"),
+      seller: { "@id": person["@id"] },
+      itemOffered: {
+        "@type": "Service",
+        name: site.hiring.pricing.scope,
+        provider: { "@id": person["@id"] },
+        url: fullUrl(`/work-with-me/#${site.hiring.pricing.serviceId}`),
+      },
+      priceSpecification: facilitationPriceSpecification(),
+    });
     webpage.about = { "@id": professionalService["@id"] };
   }
 
@@ -397,6 +453,7 @@ function layout({ title, description, route, body }) {
     </aside>
     <main id="content" class="content" tabindex="-1">
       ${body}
+      ${flowerDivider(route, "garden-footer")}
     </main>
     <aside class="rail rail-right" aria-label="Actions and official links">
       <section class="action-panel">
@@ -408,13 +465,38 @@ function layout({ title, description, route, body }) {
       <section class="link-panel">
         <h2>Official links</h2>
         <ul>
-          ${links.filter((link) => link.priority === "primary").map((link) => `<li>${linkTo(link.href, `${link.label}: ${link.value}`)}</li>`).join("")}
+          ${officialLinks.map((link) => `<li>${linkTo(link.href, link.id === "google-calendar" ? link.label : `${link.label}: ${link.value}`)}</li>`).join("")}
         </ul>
       </section>
     </aside>
   </div>
+  ${clipboardScript()}
 </body>
 </html>`;
+}
+
+function pixelFlower(route, variant) {
+  if (variant === "shoot") return `<span class="garden-shoot"></span>`;
+  const [asset, color] = variant.split(":");
+  const foliageClass = variant === "pixel-fern" ? " garden-foliage" : "";
+  const colorClass = color ? ` garden-${color}` : "";
+  return `<img class="pixel-flower${foliageClass}${colorClass}" src="${rootRelativeAsset(route, `assets/${asset}.png`)}" width="28" height="28" alt="" aria-hidden="true" draggable="false" decoding="async">`;
+}
+
+function flowerDivider(route, className = "", variant = 0) {
+  // Route-specific ordering gives each border a stable, distinct planting.
+  const flowers = ["pixel-flower", "pixel-daisy", "pixel-bellflower", "pixel-flower:coral", "pixel-bellflower:teal"];
+  const plantings = Array.from({ length: 8 }, (_, index) => {
+    const order = createHash("sha256").update(`${route}:${className}:${variant}:${index}`).digest("hex");
+    const plants = [flowers[index % flowers.length], index % 3 ? "shoot" : "pixel-fern", flowers[(index + 2) % flowers.length]];
+    return { order, plants: parseInt(order[0], 16) % 2 ? plants.reverse() : plants };
+  }).sort((a, b) => a.order.localeCompare(b.order));
+  const insect = variant % 2 ? "dragonfly" : "bee";
+  return `<div class="garden-divider ${className}" aria-hidden="true">
+    <div class="garden-plants">${plantings.map(({ plants }) => `<span class="garden-patch">${plants.map((plant) => pixelFlower(route, plant)).join("")}</span>`).join("")}</div>
+    ${className === "garden-footer" ? "" : `<img class="garden-insect garden-${insect}" src="${rootRelativeAsset(route, `assets/pixel-${insect}.svg`)}" width="24" height="16" alt="" aria-hidden="true" draggable="false">`}
+    <svg class="garden-ground" viewBox="0 0 720 8" preserveAspectRatio="none" focusable="false" aria-hidden="true" shape-rendering="crispEdges"><path d="M0 5H65V3H122V5H230V6H278V4H382V5H470V3H516V5H620V4H663V5H720"/></svg>
+  </div>`;
 }
 
 function pageHeader(kicker, title, summary) {
@@ -426,7 +508,40 @@ function pageHeader(kicker, title, summary) {
 }
 
 function copyButton(value, label = "Copy") {
-  return `<button class="copy-button" type="button" data-copy="${escapeHtml(value)}">${escapeHtml(label)}</button>`;
+  return `<button class="copy-button" type="button" data-copy="${escapeHtml(value)}" aria-live="polite">${escapeHtml(label)}</button>`;
+}
+
+function clipboardScript() {
+  return `<script>
+    document.querySelectorAll("[data-copy]").forEach((button) => {
+      const label = button.textContent;
+      let reset;
+      button.addEventListener("click", async () => {
+        const value = button.getAttribute("data-copy");
+        let copied = false;
+        try {
+          await navigator.clipboard.writeText(value);
+          copied = true;
+        } catch {
+          const input = document.createElement("textarea");
+          input.value = value;
+          input.setAttribute("readonly", "");
+          input.style.position = "fixed";
+          input.style.opacity = "0";
+          document.body.appendChild(input);
+          input.select();
+          try {
+            copied = document.execCommand("copy");
+          } catch {}
+          input.remove();
+          button.focus();
+        }
+        button.textContent = copied ? "Copied" : "Select and copy manually";
+        window.clearTimeout(reset);
+        reset = window.setTimeout(() => { button.textContent = label; }, 2000);
+      });
+    });
+  </script>`;
 }
 
 function card({ id, title, meta, summary, extra = "", evidence, compactEvidence = false }) {
@@ -471,7 +586,7 @@ function experienceCard(item) {
     title: item.name,
     meta: experienceMeta(item),
     summary: item.summary,
-    extra: `${item.context ? `<p>${escapeHtml(item.context)}</p>` : ""}${item.capabilities ? `<h4>Organizational capabilities</h4>${list(item.capabilities, "tag-list")}<p>${escapeHtml(item.capabilityEvidence)}</p>` : ""}${item.link ? linkTo(item.link, "Reference link", "text-link") : ""}`,
+    extra: `${item.context ? `<p>${escapeHtml(item.context)}</p>` : ""}${item.capabilities ? `<h4>Organizational capabilities</h4>${list(item.capabilities, "tag-list")}<p>${escapeHtml(item.capabilityEvidence)}</p>` : ""}${item.link ? linkTo(item.link, item.linkLabel || "Reference link", "text-link") : ""}`,
   });
 }
 
@@ -532,6 +647,7 @@ function homePage() {
       <h2>Source of Credibility</h2>
       <p>${escapeHtml(site.practiceSummary)}</p>
     </section>
+    ${flowerDivider("/")}
     <section class="band">
       <h2>Experience Across Contexts</h2>
       <p>Alex's practice has developed across social entrepreneurship, cooperative organizing, self-management, and Web3 governance. The common thread is helping groups coordinate, make decisions, distribute responsibility, and learn from practice.</p>
@@ -577,6 +693,7 @@ function homePage() {
         })).join("")}
       </div>
     </section>
+    ${flowerDivider("/", "", 1)}
     <section class="band">
       <h2>Selected Writing</h2>
       <div class="stack">
@@ -603,8 +720,25 @@ function homePage() {
 }
 
 function hirePage() {
+  const pricing = site.hiring.pricing;
   const body = `
     ${pageHeader("Hire", site.hiring.title, site.hiring.opening)}
+    <section id="facilitation-pricing" class="band">
+      <h2>Facilitation: budget reference</h2>
+      <p class="rate-line">${escapeHtml(pricing.hourlySummary)}</p>
+      <p>${escapeHtml(pricing.rateContext)}</p>
+      <p>${escapeHtml(pricing.minimumSummary)}</p>
+      <h3>Included in the rate</h3>
+      ${list(pricing.includes, "compact-list")}
+      <h3>Quoted by project or package</h3>
+      <p>${escapeHtml(pricing.projectOrPackageScope.join(", "))}.</p>
+      <p>${escapeHtml(pricing.longerEngagements.description)}</p>
+      <h3>Pro bono collaborations</h3>
+      <p>${escapeHtml(pricing.proBono.description)}</p>
+      <p>Quoted separately: ${escapeHtml(pricing.exclusions.join(", ").toLowerCase())}.</p>
+      <p>${escapeHtml(pricing.mexicoInvoicing)}</p>
+      <p>${escapeHtml(pricing.scopeNote)}</p>
+    </section>
     <section class="band">
       <h2>How to start</h2>
       <p>${escapeHtml(site.hiring.howToStart)}</p>
@@ -675,7 +809,8 @@ function workPage() {
           title: service.title,
           meta: service.problem,
           summary: service.outcome,
-          extra: `<p><strong>Organizational focus:</strong> ${escapeHtml(service.categories.join(", "))}.</p>${list(service.formats, "tag-list")}`,
+          extra: `<p><strong>Organizational focus:</strong> ${escapeHtml(service.categories.join(", "))}.</p>${list(service.formats, "tag-list")}
+            ${service.id === site.hiring.pricing.serviceId ? `<p><strong>Senior specialist session facilitation reference:</strong> ${escapeHtml(site.hiring.pricing.hourlySummary)}. ${escapeHtml(site.hiring.pricing.minimumSummary)}</p>${linkTo("/hire/#facilitation-pricing", "What the rate includes", "text-link")}` : ""}`,
           evidence: service.evidence,
         })).join("")}
       </div>
@@ -783,6 +918,15 @@ function aboutPage() {
       <p>${escapeHtml(practice.changesSummary)}</p>
       ${linkTo("/organizational-development/", "Organizational development in this practice", "text-link")}
     </section>
+    ${flowerDivider("/about/")}
+    <section id="this-is-my-why" class="band">
+      <h2>${escapeHtml(site.personal.title)}</h2>
+      ${site.personal.paragraphs.map((paragraph, index) => {
+        const subheading = site.personal.subheadings.find((item) => item.beforeParagraph === index);
+        return `${subheading ? `<h3>${escapeHtml(subheading.title)}</h3>` : ""}<p>${escapeHtml(paragraph)}</p>`;
+      }).join("")}
+    </section>
+    ${flowerDivider("/about/", "", 1)}
     <section class="band">
       <h2>Who I Work With</h2>
       ${list(site.audiences, "tag-list")}
@@ -914,7 +1058,7 @@ function identityPage() {
     <section class="band">
       <h2>Official Links</h2>
       <div class="link-grid">
-        ${links.map((link) => `<a class="link-card" href="${escapeHtml(link.href)}"><span>${escapeHtml(link.label)}</span><strong>${escapeHtml(link.value)}</strong><small>${escapeHtml(link.purpose.join(", "))}</small></a>`).join("")}
+        ${officialLinks.map((link) => `<a class="link-card" href="${escapeHtml(link.href)}"><span>${escapeHtml(link.label)}</span><strong>${escapeHtml(link.value)}</strong><small>${escapeHtml(link.purpose.join(", "))}</small></a>`).join("")}
       </div>
     </section>
     <section class="band">
@@ -940,43 +1084,7 @@ function identityPage() {
       </div>
       ${linkTo("/experience/", "View full experience", "text-link")}
       ${linkTo("/about/", "Read about Alex Soto", "text-link")}
-    </section>
-    <script>
-      document.querySelectorAll("[data-copy]").forEach((button) => {
-        button.addEventListener("click", async () => {
-          const value = button.getAttribute("data-copy");
-          const markCopied = () => {
-            button.textContent = "Copied";
-            window.setTimeout(() => {
-              button.textContent = "Copy";
-            }, 1400);
-          };
-          try {
-            if (navigator.clipboard && window.isSecureContext) {
-              await navigator.clipboard.writeText(value);
-              markCopied();
-              return;
-            }
-            throw new Error("Clipboard API unavailable");
-          } catch {
-            const input = document.createElement("textarea");
-            input.value = value;
-            input.setAttribute("readonly", "");
-            input.style.position = "fixed";
-            input.style.opacity = "0";
-            document.body.appendChild(input);
-            input.select();
-            try {
-              document.execCommand("copy");
-              markCopied();
-            } catch {
-              button.textContent = "Select text";
-            }
-            document.body.removeChild(input);
-          }
-        });
-      });
-    </script>`;
+    </section>`;
   writePage("/identity/", "Identity", "Canonical public identity and verification links for Alex Soto.", body);
 }
 
@@ -986,7 +1094,7 @@ function writePage(route, title, description, body) {
 }
 
 function pageRoutes() {
-  return [...nav.map(([, href]) => href), "/about/", "/organizational-development/"];
+  return [...nav.map(([, href]) => href), "/organizational-development/"];
 }
 
 function enhancePayments() {
@@ -1004,7 +1112,7 @@ function enhancePayments() {
     agentInstructions: payments.agentInstructions,
     safetyNotes: payments.safetyNotes,
     contactBeforePayment: {
-      calendly: site.ctas.primary.href,
+      bookingUrl: site.ctas.primary.href,
       email: links.find((link) => link.id === "email")?.href,
       instruction: "Confirm service scope before payment unless otherwise agreed.",
     },
@@ -1029,6 +1137,7 @@ function writeJsonEndpoints() {
     supportingLine: site.supportingLine,
     centralQuestion: site.centralQuestion,
     practiceSummary: site.practiceSummary,
+    personal: site.personal,
     organizationalDevelopmentUrl: fullUrl("/organizational-development/"),
     practice: {
       categories: practice.categories,
@@ -1047,12 +1156,13 @@ function writeJsonEndpoints() {
       availableThroughWebsite: true,
       hireUrl: fullUrl("/hire/"),
       workWithMeUrl: fullUrl("/work-with-me/"),
-      primaryPath: "Book a strategy call through Calendly.",
+      primaryPath: "Book a strategy call through Google Calendar.",
       secondaryPath: "Email Alex Soto about a project with a collaboration brief.",
-      calendly: site.ctas.primary.href,
+      bookingUrl: site.ctas.primary.href,
       email: site.hiring.contactEmail,
       emailLink: site.ctas.secondary.href,
       servicesAvailable: site.hiring.services.map((service) => service.name),
+      pricing: site.hiring.pricing,
     },
     experienceSummary: "Alex's experience spans social entrepreneurship, cooperative organizing, self-management, and Web3 governance.",
     experienceUrl: fullUrl("/experience/"),
@@ -1068,6 +1178,7 @@ function writeJsonEndpoints() {
     "about.json": about,
     "services.json": services.map((service) => ({
       ...service,
+      ...(service.id === site.hiring.pricing.serviceId ? { pricing: site.hiring.pricing } : {}),
       url: fullUrl(`/work-with-me/#${service.id}`),
       relatedProblems: practice.problems.filter((problem) => problem.relatedServices.includes(service.id)),
       outcomeQualifier: practice.outcomeQualifier,
@@ -1151,7 +1262,6 @@ function writeLlmsTxt() {
     "",
     "## Primary pages",
     ...nav.map(([label, href]) => `- ${label}: ${fullUrl(href)}`),
-    `- About: ${fullUrl("/about/")}`,
     `- Organizational Development: ${fullUrl("/organizational-development/")}`,
     "",
     "## Hiring Alex Soto",
@@ -1159,7 +1269,7 @@ function writeLlmsTxt() {
     fullUrl("/"),
     "",
     "The primary hiring path is:",
-    "1. Book a strategy call through Calendly.",
+    "1. Book a strategy call through Google Calendar.",
     `2. Or email a collaboration brief to ${site.hiring.contactEmail}.`,
     "",
     "Relevant pages:",
@@ -1168,6 +1278,20 @@ function writeLlmsTxt() {
     `- Official Identity: ${fullUrl("/identity/")}`,
     "",
     site.hiring.opening,
+    "",
+    "## Facilitation pricing: budget reference",
+    site.hiring.pricing.hourlySummary,
+    site.hiring.pricing.rateContext,
+    site.hiring.pricing.minimumSummary,
+    `- Included: ${site.hiring.pricing.includes.join("; ")}.`,
+    `- Quoted by project or package: ${site.hiring.pricing.projectOrPackageScope.join("; ")}.`,
+    site.hiring.pricing.longerEngagements.description,
+    site.hiring.pricing.proBono.description,
+    `- Additional costs: ${site.hiring.pricing.exclusions.join("; ")}.`,
+    site.hiring.pricing.mexicoInvoicing,
+    site.hiring.pricing.scopeNote,
+    site.hiring.pricing.agentInstructions,
+    `- Pricing details: ${fullUrl("/hire/#facilitation-pricing")}`,
     "",
     "## Machine-readable endpoints",
     `- about.json: ${fullUrl("/about.json")} (canonical entity, professional categories, concept relationships, methods and evidence links)`,
@@ -1183,7 +1307,7 @@ function writeLlmsTxt() {
     `- ENS: ${payments.ens}`,
     `- Ethereum address: ${payments.address}`,
     `- Canonical network: ${payments.canonicalNetwork}`,
-    "- Confirm service scope through email or Calendly before payment unless otherwise agreed.",
+    "- Confirm service scope through email or Google Calendar before payment unless otherwise agreed.",
     "- Verify ENS resolution, network, and token before sending payment.",
     "",
     "## Featured methods",
@@ -1196,7 +1320,7 @@ function writeLlmsTxt() {
     "## Experience across contexts",
     "Experience is presented as a professional trajectory, not as a product portfolio.",
     ...experienceGroups.map((group) => `- ${group.title}: ${group.summary}`),
-    ...experience.filter((item) => item.capabilities).map((item) => `- ${item.name}: ${item.capabilityEvidence} ${fullUrl(`/experience/#${item.id}`)}`),
+    ...experience.filter((item) => item.capabilities).map((item) => `- ${item.name}: ${item.capabilityEvidence} ${fullUrl(experienceHref(item.id))}`),
     practice.knowledgePage.evidenceNote,
     "",
     "## Featured writing",

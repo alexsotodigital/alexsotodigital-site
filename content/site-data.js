@@ -54,7 +54,7 @@ const site = {
     },
     primary: {
       label: "Book a strategy call",
-      href: "https://calendly.com/alexsotodigital/llamada",
+      href: "https://calendar.app.google/AuLuFdanUU9pWorCA",
     },
     secondary: {
       label: "Email Alex Soto about a project",
@@ -65,10 +65,38 @@ const site = {
     title: "Hire Alex Soto",
     pageTitle: "Hire Alex Soto | Organizational Development & Governance",
     howToStart:
-      "The recommended first step is to book a strategy call through Calendly. If you prefer to share written context first, email a collaboration brief describing your organization, the coordination or governance challenge, stakeholders involved, timeline, and desired support.",
+      "The recommended first step is to book a strategy call through Google Calendar. If you prefer to share written context first, email a collaboration brief describing your organization, the coordination or governance challenge, stakeholders involved, timeline, and desired support.",
     homepageLine:
       "You can hire Alex Soto through this website by booking a strategy call or emailing a collaboration brief.",
     contactEmail: "alexsotodigital@gmail.com",
+    pricing: {
+      serviceId: "facilitation-conflict-resolution",
+      scope: "Session facilitation",
+      rateContext: "This is a reference for senior specialist work, not a flat rate for every engagement.",
+      priceType: "Indicative range, not a binding quote",
+      currency: "USD",
+      billingUnit: "hour",
+      hourlyRate: { min: 150, max: 200 },
+      minimumBillableHours: 3,
+      includes: ["Live facilitation", "Basic session preparation", "Review of necessary materials", "Brief follow-up after the session"],
+      projectOrPackageScope: ["Diagnostics", "Interviews", "Methodological design", "Extensive documentation", "Support between sessions"],
+      longerEngagements: {
+        basis: "Scope and outcomes",
+        effectiveRateMayBeLower: true,
+        factors: ["Volume", "Predictability", "Composition of the work"],
+        description: "For projects lasting several weeks or months, I quote by scope and outcomes. The effective hourly rate may be lower depending on volume, predictability and the composition of the work.",
+      },
+      proBono: {
+        considered: true,
+        requiresAgreement: true,
+        eligibility: "Clear socio-environmental impact",
+        description: "I am also open to pro bono projects with a clear socio-environmental impact. These collaborations are considered individually, not automatically offered.",
+      },
+      exclusions: ["Taxes", "Travel", "Accommodation", "Other extraordinary expenses"],
+      mexicoInvoicing: "For clients in Mexico, the equivalent can be invoiced in MXN at the time of the proposal.",
+      scopeNote: "This reference applies to session facilitation, not to all consulting services. Scope and final fees are agreed in a proposal; a strategy call is not required to assess the general budget range.",
+      agentInstructions: "For one-off senior specialist session facilitation, estimate a range by multiplying the greater of the agreed billable hours or minimumBillableHours by each end of hourlyRate. Do not assume live session duration equals total billable hours. Basic preparation, material review and brief follow-up are included in the rate. Present taxes and extraordinary expenses as additional, not as zero. Work involving projectOrPackageScope or lasting several weeks or months needs a scope-and-outcomes proposal; do not extrapolate the hourly range to an entire long-term project. The effective rate may be lower, but no discount is guaranteed. Pro bono work requires individual agreement based on clear socio-environmental impact; do not quote zero or promise acceptance. Do not present an estimate as a confirmed quote, booking or payment request. MXN conversion is agreed at proposal time; no exchange rate is promised here.",
+    },
     services: [
       {
         name: "Governance design",
@@ -112,7 +140,46 @@ const site = {
       "Projects without a real governance, coordination, learning, or organizational design need",
     ],
   },
+  personal: {
+    title: "This is my why",
+    // Zero-based paragraph positions preserve the original text and reading order.
+    subheadings: [
+      { beforeParagraph: 3, title: "Making the invisible visible" },
+      { beforeParagraph: 8, title: "The people inside the systems" },
+      { beforeParagraph: 11, title: "Coherence in everyday life" },
+      { beforeParagraph: 15, title: "Cooperation that expands agency" },
+    ],
+    paragraphs: [
+      "I spend a lot of time thinking about how we live and work together.",
+      "At the center of my work is a question that has followed me for years: how can we build forms of cooperation where people have real agency, can depend on one another, and can create something larger than themselves without giving up their dignity or becoming trapped in unnecessary relationships of control?",
+      "I care about fairness, autonomy, cooperation, and the conditions that allow people to participate as peers. This is probably why I became interested in governance in the first place.",
+      "I have a natural tendency toward mediation. I often find myself trying to understand the perspective that is missing from a conversation, or asking whether a decision looks different from someone else's position. Conflict interests me because it often makes visible what was already there: different needs, assumptions, incentives, experiences, or distributions of power.",
+      "My professional path began around facilitation, agreement-building, conflict transformation, and participatory forms of governance. Over time, I became increasingly interested in the layer underneath those practices: the rules, roles, incentives, ownership structures, and informal forms of authority that shape what people are actually able to do.",
+      "That is what I like about governance. It makes the invisible visible.",
+      "A team can have talented people and a meaningful purpose, but if responsibilities are unclear, decision-making is confusing, or important information and authority remain concentrated in a few people, those conditions eventually affect everything built on top of them.",
+      "Over the years, this interest has expanded into organizational design, operations, institutional learning, and the broader question of how we create legitimate forms of interdependence. I am particularly interested in systems where authority can exist without becoming arbitrary, where responsibility and decision-making are aligned, and where people become more capable through participating rather than more dependent on the institution itself.",
+      "At the same time, my interest in systems has always been connected to an interest in people.",
+      "I have spent years exploring psychology, human development, meditation, and different contemplative and spiritual traditions. Those experiences have made me more aware of how much organizational life is shaped by things that cannot be solved through structure alone: fear, belonging, identity, status, control, avoidance, and the need to be recognized.",
+      "This has made me skeptical of purely technical approaches to organizational change. A beautifully designed system can still reproduce unhealthy dynamics if the people inside it are unable to recognize what they themselves bring into the room.",
+      "I also try to make some of these ideas visible in the way I live.",
+      "I value simplicity and try to need less. I prefer walking or moving by bicycle when possible, reusing things, consuming more intentionally, and reducing the distance between the things I say I care about and the way I organize my everyday life.",
+      "I do not think personal choices are a substitute for structural change, but I do care about coherence.",
+      "Movement, music, and community are also important parts of my life. I love dancing, I am learning to make music, and I enjoy being in spaces where coordination happens without needing to be fully explained. These practices remind me that listening, adapting, leading, following, and moving together are not only organizational ideas. They are also embodied skills.",
+      "Across these different parts of my life, there is one recurring intention: I want to understand how to participate in the world without relating to people, communities, or nature simply as resources to be used.",
+      "I do not think I have a finished answer to that. Much of my work is an attempt to explore the question in concrete settings: organizations, communities, networks, and small experiments in how people can share responsibility and build things together.",
+      "My goal is not to design a perfect system. It is to contribute to forms of cooperation that leave people with more agency, more capacity to act together, and more ability to question and reshape the structures they are part of.",
+      "And I try, imperfectly, to build a life that is consistent with that same idea.",
+    ],
+  },
 };
+
+site.hiring.pricing.minimumEngagement = {
+  currency: site.hiring.pricing.currency,
+  min: site.hiring.pricing.hourlyRate.min * site.hiring.pricing.minimumBillableHours,
+  max: site.hiring.pricing.hourlyRate.max * site.hiring.pricing.minimumBillableHours,
+};
+site.hiring.pricing.hourlySummary = `${site.hiring.pricing.currency} ${site.hiring.pricing.hourlyRate.min}-${site.hiring.pricing.hourlyRate.max} per hour`;
+site.hiring.pricing.minimumSummary = `Minimum ${site.hiring.pricing.minimumBillableHours} billable hours per one-off engagement: ${site.hiring.pricing.currency} ${site.hiring.pricing.minimumEngagement.min}-${site.hiring.pricing.minimumEngagement.max} before taxes and extraordinary expenses.`;
 
 site.shortBio = `${site.name} is an ${site.professionalClassification.charAt(0).toLowerCase()}${site.professionalClassification.slice(1)} ${site.workingContext}`;
 site.hiring.metaDescription = `${site.professionalClassification} Based in Mexico, working internationally. Book a strategy call or email a collaboration brief.`;
@@ -224,6 +291,30 @@ const practice = {
 
 const links = [
   {
+    id: "linkedin",
+    label: "LinkedIn",
+    value: "alexsotodigital",
+    href: "https://www.linkedin.com/in/alexsotodigital/",
+    priority: "primary",
+    purpose: ["professional profile"],
+  },
+  {
+    id: "substack",
+    label: "Substack",
+    value: "@alexsotodigital",
+    href: "https://alexsotodigital.substack.com/",
+    priority: "primary",
+    purpose: ["writing"],
+  },
+  {
+    id: "youtube",
+    label: "YouTube",
+    value: "@alexsotodigital",
+    href: "https://www.youtube.com/@alexsotodigital",
+    priority: "primary",
+    purpose: ["identity", "public profile"],
+  },
+  {
     id: "ens",
     label: "ENS",
     value: "alexsotodigital.eth",
@@ -248,10 +339,10 @@ const links = [
     purpose: ["contact", "collaboration brief"],
   },
   {
-    id: "calendly",
-    label: "Calendly",
-    value: "Book a strategy call",
-    href: "https://calendly.com/alexsotodigital/llamada",
+    id: "google-calendar",
+    label: "Google Calendar",
+    value: "Availability",
+    href: site.ctas.primary.href,
     priority: "primary",
     purpose: ["strategy call"],
   },
@@ -272,14 +363,6 @@ const links = [
     purpose: ["identity", "work archive"],
   },
   {
-    id: "linkedin",
-    label: "LinkedIn",
-    value: "alexsotodigital",
-    href: "https://www.linkedin.com/in/alexsotodigital/",
-    priority: "secondary",
-    purpose: ["professional profile"],
-  },
-  {
     id: "telegram",
     label: "Telegram",
     value: "alexsotodigital",
@@ -288,18 +371,42 @@ const links = [
     purpose: ["contact"],
   },
   {
-    id: "substack",
-    label: "Substack",
+    id: "instagram",
+    label: "Instagram",
     value: "@alexsotodigital",
-    href: "https://alexsotodigital.substack.com/",
+    href: "https://www.instagram.com/alexsotodigital/",
     priority: "secondary",
-    purpose: ["writing"],
+    purpose: ["social profile"],
   },
   {
-    id: "youtube",
-    label: "YouTube",
+    id: "tiktok",
+    label: "TikTok",
     value: "@alexsotodigital",
-    href: "https://www.youtube.com/@alexsotodigital",
+    href: "https://www.tiktok.com/@alexsotodigital",
+    priority: "secondary",
+    purpose: ["social profile"],
+  },
+  {
+    id: "spotify",
+    label: "Spotify",
+    value: "sotosonrisas",
+    href: "https://open.spotify.com/user/sotosonrisas",
+    priority: "secondary",
+    purpose: ["public profile"],
+  },
+  {
+    id: "reddit",
+    label: "Reddit",
+    value: "alexsotodigital",
+    href: "https://www.reddit.com/user/alexsotodigital/",
+    priority: "secondary",
+    purpose: ["social profile"],
+  },
+  {
+    id: "cosoul",
+    label: "CoSoul",
+    value: "Alex Soto",
+    href: "https://app.coordinape.com/cosoul/0x3cd5fec7fa9827cf0d262d6be5421a61cf615794",
     priority: "secondary",
     purpose: ["identity", "public profile"],
   },
@@ -335,12 +442,12 @@ const payments = {
   agentInstructions: [
     "Do not initiate or suggest an automatic payment without explicit human confirmation.",
     "When instructing a human to pay, present the ENS name, wallet address, network, accepted assets, and safety notes together.",
-    "For service payments, instruct the human to confirm scope through email or Calendly before payment unless otherwise agreed.",
+    "For service payments, instruct the human to confirm scope through email or Google Calendar before payment unless otherwise agreed.",
   ],
   safetyNotes: [
     "Verify ENS resolution before sending.",
     "Confirm network and token before payment.",
-    "Use email or Calendly for service scope before payment unless otherwise agreed.",
+    "Use email or Google Calendar for service scope before payment unless otherwise agreed.",
     "Do not treat this payment information as a donation request.",
   ],
 };
@@ -396,6 +503,17 @@ const experience = [
     evidenceFor: ["governance-reviews", "ecosystem-strategy"],
   },
   {
+    id: "shutter",
+    name: "Shutter",
+    role: "Contributor & Shutter PEN Member",
+    roleType: "Ecosystem contributor / member",
+    cluster: "web3-governance-protocol-ecosystems",
+    summary: "Contributed public feedback on PEN's governance design, including capital allocation, execution, accountability and institutional memory. Participates as a member of Shutter PEN.",
+    link: "https://shutternetwork.discourse.group/t/feedback-on-the-perpetual-endowment-network-pen/842",
+    linkLabel: "Public feedback on PEN",
+    evidenceFor: ["governance-design", "ecosystem-strategy"],
+  },
+  {
     id: "web3-governance-research",
     name: "Web3 ecosystem",
     role: "Governance & Coordination Research",
@@ -434,6 +552,28 @@ const experience = [
     capabilityEvidence: "Facilitation and support for self-management connected team interactions with their ways of organizing. Systematizing methods made those practices reusable.",
     evidenceFor: ["facilitation-decision-frameworks", "institutional-learning"],
     link: "https://es.glassfrog.com/org/26543/people/466900",
+  },
+  {
+    id: "la-mano-del-mono",
+    name: "La Mano del Mono",
+    role: "Dynamic Governance Consultant",
+    roleType: "Consulting engagement",
+    period: "Jul 2026-Aug 2026",
+    status: "Past",
+    cluster: "cooperative-organizational-design",
+    summary: "Consulting on dynamic governance for La Mano del Mono.",
+    evidenceFor: ["governance-design"],
+  },
+  {
+    id: "juegas-ac",
+    name: "Juegas AC",
+    role: "Action Plan Consultant",
+    roleType: "Consulting engagement",
+    period: "May 2026-Jun 2026",
+    status: "Past",
+    cluster: "cooperative-organizational-design",
+    summary: "Consulting on the action plan for Juegas AC.",
+    evidenceFor: ["coordination-systems"],
   },
   {
     id: "sociocracy-practica",
@@ -546,13 +686,13 @@ const experienceGroups = [
     id: "web3-governance-protocol-ecosystems",
     title: "Web3 Governance & Protocol Ecosystems",
     summary: "Protocol governance, DAO operations, delegation, proposal review, and ecosystem coordination.",
-    items: ["optimism", "optimism-security-council-cohort-b", "scroll", "web3-governance-research"],
+    items: ["optimism-security-council-cohort-b", "optimism", "shutter", "scroll", "web3-governance-research"],
   },
   {
     id: "cooperative-organizational-design",
     title: "Cooperative & Organizational Design",
     summary: "Cooperative infrastructure, self-management, sociocracy, facilitation, and organizational learning.",
-    items: ["matriz-experience", "alexsotodigital-practice", "ouitopia", "sociocracy-practica", "reimagina", "covive"],
+    items: ["matriz-experience", "la-mano-del-mono", "juegas-ac", "ouitopia", "sociocracy-practica", "reimagina", "covive"],
   },
   {
     id: "social-entrepreneurship-media-community",
@@ -714,6 +854,24 @@ const services = [
 
 const projects = [
   {
+    id: "concordia",
+    title: "Concordia",
+    type: "Coordination tools",
+    status: "In development",
+    role: "Designer and builder",
+    featured: true,
+    summary: "An applied experiment in multi-group collaboration, governance context, shared decision processes, and reusable organizational memory.",
+    problem: "Distributed groups need better ways to coordinate across teams, contexts, and decision spaces.",
+    approach: "Use product design as a research context for explicit groups, roles, decision context, and reusable governance knowledge that can improve over time.",
+    lessons: ["Coordination tooling should make context portable", "Governance knowledge needs structure before automation", "Adaptive organizations need memory they can reuse"],
+    evidence: {
+      methods: ["governance-reviews", "coordination-diagnostics"],
+      services: ["governance-design", "coordination-systems", "ecosystem-strategy", "dao-operations"],
+      articles: ["power-of-decentralization", "value-based-compensation-daos"],
+      experience: ["alexsotodigital-practice"],
+    },
+  },
+  {
     id: "matriz",
     title: "Matriz",
     type: "Cooperative",
@@ -730,24 +888,6 @@ const projects = [
       services: ["coordination-systems", "facilitation-conflict-resolution"],
       articles: ["mutualism-web3-era", "development-without-destruction"],
       experience: ["matriz-experience"],
-    },
-  },
-  {
-    id: "concordia",
-    title: "Concordia",
-    type: "Coordination tools",
-    status: "In development",
-    role: "Designer and builder",
-    featured: true,
-    summary: "An applied experiment in multi-group collaboration, governance context, shared decision processes, and reusable organizational memory.",
-    problem: "Distributed groups need better ways to coordinate across teams, contexts, and decision spaces.",
-    approach: "Use product design as a research context for explicit groups, roles, decision context, and reusable governance knowledge that can improve over time.",
-    lessons: ["Coordination tooling should make context portable", "Governance knowledge needs structure before automation", "Adaptive organizations need memory they can reuse"],
-    evidence: {
-      methods: ["governance-reviews", "coordination-diagnostics"],
-      services: ["governance-design", "coordination-systems", "ecosystem-strategy", "dao-operations"],
-      articles: ["power-of-decentralization", "value-based-compensation-daos"],
-      experience: ["alexsotodigital-practice"],
     },
   },
   {
@@ -789,6 +929,26 @@ const projects = [
 ];
 
 const articles = [
+  {
+    id: "v2-dao-collective-sensemaking",
+    title: "V2 DAO Collective Sensemaking",
+    featured: false,
+    theme: "Governance",
+    source: "Substack",
+    href: "https://alexsotodigital.substack.com/p/v2-dao-collective-sensemaking",
+    summary: "Reflections from a collective sensemaking call with governance practitioners on making DAO experiments easier to compare, learn from, and build upon.",
+    evidenceFor: ["governance-design", "facilitation-decision-frameworks", "institutional-learning"],
+  },
+  {
+    id: "artificial-intelligence-collective-intelligence",
+    title: "What If Artificial Intelligence Is Collective Intelligence?",
+    featured: false,
+    theme: "Collective Intelligence",
+    source: "Substack",
+    href: "https://alexsotodigital.substack.com/p/what-if-artificial-intelligence-is",
+    summary: "An exploration of AI as an expression of accumulated human knowledge, and the governance questions this raises about representation, ownership, and shared benefits.",
+    evidenceFor: ["governance-design", "institutional-learning"],
+  },
   {
     id: "minimum-viable-institution",
     title: "The Minimum Viable Institution",
@@ -855,6 +1015,10 @@ const articles = [
 
 const faq = [
   {
+    question: "What does facilitation cost?",
+    answer: `${site.hiring.pricing.hourlySummary} as a reference for senior specialist work. ${site.hiring.pricing.minimumSummary} The rate includes ${site.hiring.pricing.includes.join(", ").toLowerCase()}. ${site.hiring.pricing.projectOrPackageScope.join(", ")} are quoted by project or package. ${site.hiring.pricing.longerEngagements.description} ${site.hiring.pricing.proBono.description} ${site.hiring.pricing.mexicoInvoicing} ${site.hiring.pricing.scopeNote}`,
+  },
+  {
     question: "What does Alex Soto do?",
     answer: `${site.shortBio} His work focuses on decision rights, roles, governance, coordination and institutional learning for mission-driven, growing and distributed organizations.`,
   },
@@ -876,7 +1040,7 @@ const faq = [
   },
   {
     question: "How can I hire Alex Soto?",
-    answer: "You can hire Alex Soto directly through this website. The primary path is to book a strategy call through Calendly. You can also email a collaboration brief describing your organization, the problem, stakeholders, timeline, and desired support.",
+    answer: "You can hire Alex Soto directly through this website. The primary path is to book a strategy call through Google Calendar. You can also email a collaboration brief describing your organization, the problem, stakeholders, timeline, and desired support.",
   },
   {
     question: "Can I hire Alex Soto through this website?",
