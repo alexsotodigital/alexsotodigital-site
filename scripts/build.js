@@ -1,6 +1,8 @@
 const fs = require("fs");
 const { createHash } = require("crypto");
 const path = require("path");
+const destraba = require("../content/destraba");
+const renderDestraba = require("./destraba-page");
 const {
   site,
   practice,
@@ -1094,7 +1096,7 @@ function writePage(route, title, description, body) {
 }
 
 function pageRoutes() {
-  return [...nav.map(([, href]) => href), "/organizational-development/"];
+  return [...nav.map(([, href]) => href), "/organizational-development/", destraba.route];
 }
 
 function enhancePayments() {
@@ -1367,6 +1369,10 @@ function build() {
   writingPage();
   faqPage();
   identityPage();
+  writeFile(path.join(slugPath(destraba.route), "index.html"), renderDestraba({
+    escapeHtml, fullUrl, rootRelativeAsset, inlineStyles, site,
+    campaignStyles: fs.readFileSync(path.join(root, "src", "destraba.css"), "utf8"),
+  }));
   writeJsonEndpoints();
   writeRobotsTxt();
   writeSitemapXml();
