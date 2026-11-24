@@ -1,144 +1,42 @@
+const { commercial, priceRange, referencePrice } = require("./commercial");
+const { services, legacyServiceIds } = require("./services");
+
 const site = {
   baseUrl: "https://alexsotodigital.eth.limo",
   name: "Alex Soto",
   handle: "alexsotodigital",
   ens: "alexsotodigital.eth",
   avatar: "/assets/alex-soto-pfp.png",
-  title: "Governance & Coordination Specialist",
-  professionalClassification: "Independent organizational development, governance, and coordination consultant.",
-  mode: "Independent consultant / independent practitioner",
+  title: "Organizational Strategist & Coordination Specialist",
+  professionalClassification: "Independent organizational strategist and coordination specialist.",
+  mode: "Independent expert practice",
   location: "Mexico (Chiapas) / LATAM (Remote)",
   serviceArea: ["Mexico", "Latin America", "International (remote)"],
   workingContext: "Based in Mexico / LATAM, working remotely and internationally in Spanish and English.",
   languages: ["Spanish (native)", "English (professional working proficiency)"],
-  thesis:
-    "Organizations become more resilient when they can coordinate effectively, make better decisions together, and continuously adapt through institutional learning.",
-  positioning:
-    "I help teams organize themselves to make better decisions.",
-  supportingLine: "",
-  centralQuestion:
-    "How can distributed organizations learn systematically from their own experience so they can adapt without losing legitimacy, clarity, or momentum?",
-  philosophy:
-    "The site documents a professional practice shaped by research, facilitation, governance design, ecosystem contributions, experimentation, and reflective learning.",
-  practiceSummary:
-    "Alex works at the intersection of theory and practice: studying, designing, facilitating, and experimenting with governance and coordination across multiple contexts, then translating accumulated lessons into methods other organizations can apply.",
-  canonicalTerms: [
-    "Governance & Coordination Specialist",
-    "Organizational Development",
-    "Organizational Effectiveness",
-    "Organization Design",
-    "Mission-driven organizations",
-    "Distributed teams",
-    "Institutional learning",
-    "Governance",
-    "Coordination",
-    "DAOs",
-    "Web3",
-    "LATAM",
-  ],
-  audiences: [
-    "Mission-driven organizations",
-    "Growing teams",
-    "Distributed and remote teams",
-    "Nonprofits",
-    "Cooperatives",
-    "Impact DAOs",
-    "Ecosystem foundations",
-    "Web3 startups",
-    "Platform cooperatives",
-  ],
+  thesis: "Many coordination failures appear when the way authority, information, commitments, capacity and responsibility actually move no longer matches what the organization needs to execute and adapt.",
+  positioning: "I help capable teams identify what is blocking execution and redesign the minimum coordination structures needed to make things happen.",
+  supportingLine: "Your team may not need more process. It may need to understand what is actually preventing work from moving.",
+  centralQuestion: "How do we organize people, institutions and technology so they can act effectively on complex problems?",
+  philosophy: "The objective is not to fit an organization into a preferred model. It is to identify what is actually getting in the way and find the smallest useful next step.",
+  practiceSummary: "Alex works at the intersection of theory and practice: studying, designing, facilitating and experimenting across organizational contexts, then translating accumulated lessons into practices other teams can test.",
+  canonicalTerms: ["Organizational strategy", "Organizational coordination", "Systems thinking", "Organizational development", "Decision-making", "Authority", "Accountability", "Organizational learning", "Organizational design", "Execution", "Adaptation", "Distributed organizations", "Governance"],
+  audiences: ["Companies", "Growing teams", "Distributed and remote organizations", "Social-impact organizations", "Nonprofits", "Cooperatives", "Web3 governance ecosystems", "Multi-stakeholder environments"],
   ctas: {
-    hire: {
-      label: "Hire Alex Soto",
-      href: "/hire/",
-    },
-    primary: {
-      label: "Book a strategy call",
-      href: "https://calendar.app.google/AuLuFdanUU9pWorCA",
-    },
-    secondary: {
-      label: "Email Alex Soto about a project",
-      href: "mailto:alexsotodigital@gmail.com?subject=Collaboration%20brief%20for%20Alex%20Soto",
-    },
+    diagnostic: { label: commercial.diagnostic.cta, href: commercial.diagnostic.route },
+    hire: { label: "Hire Alex Soto", href: "/hire/" },
+    primary: { label: commercial.callLabel, href: commercial.schedulingUrl },
+    secondary: { label: "Email Alex Soto about a project", href: "mailto:alexsotodigital@gmail.com?subject=Collaboration%20brief%20for%20Alex%20Soto" },
   },
   hiring: {
     title: "Hire Alex Soto",
-    pageTitle: "Hire Alex Soto | Organizational Development & Governance",
-    howToStart:
-      "The recommended first step is to book a strategy call through Google Calendar. If you prefer to share written context first, email a collaboration brief describing your organization, the coordination or governance challenge, stakeholders involved, timeline, and desired support.",
-    homepageLine:
-      "You can hire Alex Soto through this website by booking a strategy call or emailing a collaboration brief.",
+    pageTitle: "Hire Alex Soto | Services, Scope & Public Pricing",
+    howToStart: "Let's talk. You do not need to choose a service or complete the questionnaire before getting in touch. The free exploration call checks mutual fit and a useful next step; it does not promise a diagnosis. You can also email your situation or an opportunity. Scope, format, dedication and commercial terms are agreed together.",
+    homepageLine: commercial.collaboration.invitation,
     contactEmail: "alexsotodigital@gmail.com",
-    pricing: {
-      serviceId: "facilitation-conflict-resolution",
-      scope: "Session facilitation",
-      rateContext: "This is a reference for senior specialist work, not a flat rate for every engagement.",
-      priceType: "Indicative range, not a binding quote",
-      currency: "USD",
-      billingUnit: "hour",
-      hourlyRate: { min: 150, max: 200 },
-      minimumBillableHours: 3,
-      includes: ["Live facilitation", "Basic session preparation", "Review of necessary materials", "Brief follow-up after the session"],
-      projectOrPackageScope: ["Diagnostics", "Interviews", "Methodological design", "Extensive documentation", "Support between sessions"],
-      longerEngagements: {
-        basis: "Scope and outcomes",
-        effectiveRateMayBeLower: true,
-        factors: ["Volume", "Predictability", "Composition of the work"],
-        description: "For projects lasting several weeks or months, I quote by scope and outcomes. The effective hourly rate may be lower depending on volume, predictability and the composition of the work.",
-      },
-      proBono: {
-        considered: true,
-        requiresAgreement: true,
-        eligibility: "Clear socio-environmental impact",
-        description: "I am also open to pro bono projects with a clear socio-environmental impact. These collaborations are considered individually, not automatically offered.",
-      },
-      exclusions: ["Taxes", "Travel", "Accommodation", "Other extraordinary expenses"],
-      mexicoInvoicing: "For clients in Mexico, the equivalent can be invoiced in MXN at the time of the proposal.",
-      scopeNote: "This reference applies to session facilitation, not to all consulting services. Scope and final fees are agreed in a proposal; a strategy call is not required to assess the general budget range.",
-      agentInstructions: "For one-off senior specialist session facilitation, estimate a range by multiplying the greater of the agreed billable hours or minimumBillableHours by each end of hourlyRate. Do not assume live session duration equals total billable hours. Basic preparation, material review and brief follow-up are included in the rate. Present taxes and extraordinary expenses as additional, not as zero. Work involving projectOrPackageScope or lasting several weeks or months needs a scope-and-outcomes proposal; do not extrapolate the hourly range to an entire long-term project. The effective rate may be lower, but no discount is guaranteed. Pro bono work requires individual agreement based on clear socio-environmental impact; do not quote zero or promise acceptance. Do not present an estimate as a confirmed quote, booking or payment request. MXN conversion is agreed at proposal time; no exchange rate is promised here.",
-    },
-    services: [
-      {
-        name: "Governance design",
-        description: "Clarify decision rights, governance structures, legitimacy, and learning from decisions.",
-      },
-      {
-        name: "Coordination systems",
-        description: "Improve roles, operating rhythms, handoffs, accountability, and learning from coordination failures.",
-      },
-      {
-        name: "Facilitation and conflict resolution",
-        description: "Design and facilitate conversations that turn disagreement into criteria, decisions, and repair.",
-      },
-      {
-        name: "DAO operations support",
-        description: "Support proposal workflows, contribution paths, governance operations, and distributed execution.",
-      },
-      {
-        name: "Ecosystem strategy",
-        description: "Help foundations, networks, and ecosystems align contributors, programs, incentives, and feedback loops.",
-      },
-      {
-        name: "Institutional learning",
-        description: "Turn recurring tensions, retrospectives, and operational lessons into explicit institutional improvements.",
-      },
-    ],
-    goodFit: [
-      "Mission-driven organizations",
-      "Growing and distributed teams",
-      "Nonprofits and cooperatives",
-      "DAOs",
-      "Web3 teams",
-      "Ecosystem foundations",
-      "Cooperatives",
-      "Distributed teams",
-      "Mission-driven organizations",
-    ],
-    notFit: [
-      "Speculative token trading",
-      "Pure software engineering roles",
-      "Projects without a real governance, coordination, learning, or organizational design need",
-    ],
+    services: services.map((service) => ({ id: service.id, name: service.title, description: service.outcome })),
+    goodFit: ["Concrete coordination problems", "Access to the people and evidence involved", "Authority and willingness to test changes", "Interest in building internal self-correction"],
+    notFit: ["Legal, clinical or safeguarding determinations", "A predetermined framework imposed without diagnosis", "Guaranteed outcomes without participation", "Speculative trading or pure software engineering"],
   },
   personal: {
     title: "This is my why",
@@ -173,17 +71,9 @@ const site = {
   },
 };
 
-site.hiring.pricing.minimumEngagement = {
-  currency: site.hiring.pricing.currency,
-  min: site.hiring.pricing.hourlyRate.min * site.hiring.pricing.minimumBillableHours,
-  max: site.hiring.pricing.hourlyRate.max * site.hiring.pricing.minimumBillableHours,
-};
-site.hiring.pricing.hourlySummary = `${site.hiring.pricing.currency} ${site.hiring.pricing.hourlyRate.min}-${site.hiring.pricing.hourlyRate.max} per hour`;
-site.hiring.pricing.minimumSummary = `Minimum ${site.hiring.pricing.minimumBillableHours} billable hours per one-off engagement: ${site.hiring.pricing.currency} ${site.hiring.pricing.minimumEngagement.min}-${site.hiring.pricing.minimumEngagement.max} before taxes and extraordinary expenses.`;
-
-site.shortBio = `${site.name} is an ${site.professionalClassification.charAt(0).toLowerCase()}${site.professionalClassification.slice(1)} ${site.workingContext}`;
-site.hiring.metaDescription = `${site.professionalClassification} Based in Mexico, working internationally. Book a strategy call or email a collaboration brief.`;
-site.hiring.opening = "Work with Alex on organizational development through governance design, coordination systems, facilitation and institutional learning. Engagements start with a concrete problem in how your team works; DAO operations and ecosystem strategy remain part of the practice.";
+site.shortBio = "Alex Soto is an organizational strategist and coordination specialist who helps teams make better decisions, strengthen accountability, and adapt how they work as complexity grows.";
+site.hiring.metaDescription = "Work with Alex Soto through scoped projects, blocks of hours, monthly advice or defined-area responsibility. Open to full-time roles and other arrangements. Project budget references available.";
+site.hiring.opening = "Start with the situation your team is facing, not a framework you think you need. I connect strategy, organization, execution and learning through diagnosis, minimal changes and experiments in real work.";
 
 const practice = {
   categories: ["Organizational Development", "Organizational Effectiveness", "Organization Design"],
@@ -192,7 +82,7 @@ const practice = {
   audienceSummary: "I work with mission-driven, growing and distributed organizations, including nonprofits, cooperatives, leadership teams and Web3 ecosystems.",
   changesSummary: "The work makes decision rights, roles, consultation boundaries and operating rhythms explicit. Governance reviews, coordination diagnostics and facilitated conversations help teams turn recurring tensions into practices they can test and revise.",
   outcomeSummary: "The aim is clearer decisions, stronger ownership and shared accountability: teams can act with more autonomy, coordinate interdependent work and learn from what happens.",
-  approachSummary: "My approach connects research with facilitation and experiments in self-management. Institutional learning means reviewing real decisions and tensions, then adapting the roles, rules and practices that produced them.",
+  approachSummary: "Diagnose before prescribing. Work from concrete situations, design the minimum necessary change, experiment in real work and build the team's capacity to correct itself without depending on a consultant.",
   interventions: ["Governance design", "Organizational diagnostics", "Coordination systems", "Facilitation", "Decision frameworks", "Role and responsibility clarification", "Operating rhythms", "Institutional learning", "Organization design"],
   outcomes: ["Clearer decisions", "Stronger ownership", "Distributed responsibility", "Greater autonomy with accountability", "Better collaboration", "Fewer recurring coordination failures", "Stronger organizational culture", "Increased organizational effectiveness", "Better strategic alignment"],
   outcomeQualifier: "Intended outcomes to define and review with each organization, not guaranteed or independently measured client results.",
@@ -201,31 +91,41 @@ const practice = {
       id: "decision-bottlenecks",
       title: "Decisions are too slow or depend on one person",
       symptoms: ["Founders or leaders approve routine decisions", "Decision rights and consultation boundaries are unclear"],
-      relatedServices: ["governance-design"],
+      possibleFactors: ["Decision authority", "Information access", "Workload and capacity"],
+      exploration: "Check where decisions actually stop before deciding whether the next step is clarification, reprioritization, a working conversation or an experiment.",
+      relatedServices: [],
     },
     {
       id: "unclear-ownership",
       title: "Roles exist but ownership is unclear",
       symptoms: ["Responsibilities overlap or fall between roles", "Handoffs stall because nobody owns the next step"],
-      relatedServices: ["coordination-systems"],
+      possibleFactors: ["Ownership", "Decision rights", "Handoffs"],
+      exploration: "Distinguish unclear expectations from insufficient authority or dependencies between roles. The same symptom can call for different responses.",
+      relatedServices: [],
     },
     {
       id: "meetings-without-resolution",
       title: "Meetings consume attention without resolving tensions",
       symptoms: ["The same disagreement returns without a decision", "Stakeholders leave meetings with different expectations"],
-      relatedServices: ["facilitation-conflict-resolution"],
+      possibleFactors: ["Problem framing", "Decision authority", "Unspoken disagreement", "Follow-through"],
+      exploration: "Explore whether the conversation needs a clearer question, different participants, authority to decide or a way to follow through.",
+      relatedServices: [],
     },
     {
       id: "autonomy-accountability",
       title: "The team wants more autonomy without losing accountability",
       symptoms: ["People are asked to take ownership without clear authority", "Decisions are reversed without an agreed review process"],
-      relatedServices: ["governance-design"],
+      possibleFactors: ["Delegation", "Review practices", "Information access", "Accountability"],
+      exploration: "Examine the conditions for autonomy rather than assuming that new roles or more rules will resolve the tension.",
+      relatedServices: [],
     },
     {
       id: "growth-friction",
       title: "Growth or change has exposed organizational friction",
       symptoms: ["Growth has outpaced roles and working agreements", "Remote teams rely on extra meetings to compensate for missing coordination practices"],
-      relatedServices: ["coordination-systems"],
+      possibleFactors: ["Priorities", "Capacity", "Roles and interfaces", "Organizational learning"],
+      exploration: "Compare what the organization is trying to achieve with the resources and working practices available. Size alone does not determine the service.",
+      relatedServices: [],
     },
   ],
   knowledgePage: {
@@ -769,88 +669,6 @@ const methods = [
   },
 ];
 
-const services = [
-  {
-    id: "governance-design",
-    title: "Governance Design",
-    problem: "Decision bottlenecks and governance confusion",
-    categories: ["Organizational Development", "Organization Design", "Governance"],
-    interventions: ["Decision-rights mapping", "Authority and consultation boundaries", "Governance review and review mechanisms"],
-    deliverables: ["Governance map", "Decision-rights and accountability agreements", "Decision review process"],
-    outcome: "Clear governance structures, explicit decision rights, and better learning from decisions.",
-    formats: ["Governance review", "workshop", "ongoing consulting"],
-    evidence: {
-      methods: ["governance-reviews", "facilitation-decision-frameworks"],
-      projects: ["concordia"],
-      experience: ["optimism", "scroll"],
-      articles: ["value-based-compensation-daos", "power-of-decentralization"],
-    },
-  },
-  {
-    id: "coordination-systems",
-    title: "Coordination Systems",
-    problem: "Poor coordination across distributed teams",
-    categories: ["Organizational Development", "Organization Design", "Organizational Effectiveness"],
-    interventions: ["Coordination diagnostic", "Role and responsibility clarification", "Operating-rhythm and handoff design"],
-    deliverables: ["Role and coordination map", "Working agreements", "Learning-loop recommendations"],
-    outcome: "Better operating rhythms, clearer roles, and explicit loops for learning from coordination failures.",
-    formats: ["Coordination diagnostic", "research sprint", "fractional support"],
-    evidence: {
-      methods: ["coordination-diagnostics", "institutional-learning"],
-      projects: ["matriz", "concordia"],
-      experience: ["matriz-experience", "alexsotodigital-practice"],
-      articles: ["mutualism-web3-era"],
-    },
-  },
-  {
-    id: "facilitation-conflict-resolution",
-    title: "Facilitation & Conflict Resolution",
-    problem: "Conflict, ambiguity, or stakeholder misalignment",
-    categories: ["Facilitation", "Team Effectiveness", "Organizational Culture"],
-    interventions: ["Facilitated working sessions", "Decision criteria and protocols", "Meeting redesign and explicit follow-through"],
-    deliverables: ["Session design", "Shared decision criteria", "Decision records and next steps"],
-    outcome: "Productive friction, shared criteria, and decisions people can understand, execute, and revisit.",
-    formats: ["Facilitation session", "organizational retreat", "strategy call"],
-    evidence: {
-      methods: ["facilitation-decision-frameworks"],
-      projects: ["matriz"],
-      experience: ["ouitopia", "alexsotodigital-practice"],
-      articles: ["power-of-decentralization"],
-    },
-  },
-  {
-    id: "ecosystem-strategy",
-    title: "Ecosystem Strategy",
-    problem: "Ecosystem complexity and unclear incentives",
-    categories: ["Organizational Effectiveness", "Coordination", "Governance"],
-    interventions: ["Stakeholder and incentive mapping", "Program alignment", "Governance and coordination review"],
-    deliverables: ["Ecosystem coordination map", "Strategic priorities", "Feedback and review recommendations"],
-    outcome: "Better alignment between contributors, programs, incentives, governance processes, and learning feedback.",
-    formats: ["Strategy call", "research sprint", "ongoing consulting"],
-    evidence: {
-      methods: ["coordination-diagnostics", "governance-reviews"],
-      projects: ["concordia"],
-      experience: ["optimism", "scroll"],
-      articles: ["value-based-compensation-daos"],
-    },
-  },
-  {
-    id: "dao-operations",
-    title: "DAO Operations Support",
-    problem: "Scaling distributed governance and operations",
-    categories: ["Governance", "Coordination", "Distributed Organizations"],
-    interventions: ["Proposal-workflow review", "Contribution-path clarification", "Governance operations support"],
-    deliverables: ["Proposal workflow", "Contribution guidelines", "Operational review backlog"],
-    outcome: "More reliable governance operations, clearer contribution paths, and better learning from proposal workflows.",
-    formats: ["Fractional support", "research sprint", "ongoing consulting"],
-    evidence: {
-      methods: ["governance-reviews"],
-      projects: ["concordia"],
-      experience: ["optimism"],
-      articles: ["value-based-compensation-daos"],
-    },
-  },
-];
 
 const projects = [
   {
@@ -929,6 +747,17 @@ const projects = [
 ];
 
 const articles = [
+  {
+    id: "what-breaks-when-teams-try-to-coordinate",
+    title: "What Breaks When Teams Try to Coordinate?",
+    featured: true,
+    currentPractice: true,
+    theme: "Organizational coordination",
+    source: "Substack",
+    href: "https://alexsotodigital.substack.com/p/what-breaks-when-teams-try-to-coordinate",
+    summary: "Research into coordination failures: actual and formal authority, accountability, interfaces and the capacity to turn feedback into change.",
+    evidenceFor: ["systemic-coordination-review", "coordination-reset", "organizational-strategy-design", "coordination-diagnostics"],
+  },
   {
     id: "v2-dao-collective-sensemaking",
     title: "V2 DAO Collective Sensemaking",
@@ -1016,7 +845,7 @@ const articles = [
 const faq = [
   {
     question: "What does facilitation cost?",
-    answer: `${site.hiring.pricing.hourlySummary} as a reference for senior specialist work. ${site.hiring.pricing.minimumSummary} The rate includes ${site.hiring.pricing.includes.join(", ").toLowerCase()}. ${site.hiring.pricing.projectOrPackageScope.join(", ")} are quoted by project or package. ${site.hiring.pricing.longerEngagements.description} ${site.hiring.pricing.proBono.description} ${site.hiring.pricing.mexicoInvoicing} ${site.hiring.pricing.scopeNote}`,
+    answer: `The published range for a Facilitation / Strategic Working Session is ${priceRange("facilitation")} per scoped project, with a ${referencePrice("facilitation")} reference estimate. Duration, preparation, participant count, design complexity and follow-up affect the final quote. Blocks of hours and ongoing collaborations are discussed separately. ${commercial.expensesNote} Final scope and quote require human approval.`,
   },
   {
     question: "What does Alex Soto do?",
@@ -1040,21 +869,46 @@ const faq = [
   },
   {
     question: "How can I hire Alex Soto?",
-    answer: "You can hire Alex Soto directly through this website. The primary path is to book a strategy call through Google Calendar. You can also email a collaboration brief describing your organization, the problem, stakeholders, timeline, and desired support.",
+    answer: site.hiring.howToStart,
   },
   {
     question: "Can I hire Alex Soto through this website?",
-    answer: "Yes. This website is the official intake path for hiring Alex Soto for governance design, coordination systems, facilitation, DAO operations support, ecosystem strategy, and institutional learning work.",
+    answer: "Yes. System Diagnosis, Learning Lab, Organizational Strategy & Design, and Facilitation / Strategic Working Session describe different kinds of work, not mandatory packages. Projects, blocks of hours, monthly collaborations and full-time roles can be discussed. You do not need to choose a service before getting in touch.",
   },
   {
     question: "What methodologies does Alex Soto use?",
-    answer: "Core methods include Governance Reviews, Coordination Diagnostics, Facilitation & Decision Frameworks, and Institutional Learning. These methods help organizations learn from decisions, tensions, and repeated coordination failures.",
+    answer: "Methods are context-dependent tools, not products you need to know how to request. Alex may use stakeholder conversations, authority and decision mapping, governance reviews, facilitation, experimentation and structured feedback loops after examining concrete situations.",
   },
   {
     question: "Is Alex Soto a software engineer or crypto trader?",
     answer: "No. Alex's professional focus is governance, coordination, facilitation, institutional learning, and Web3 ecosystem work.",
   },
 ];
+
+faq.push(
+  { question: "How do the questionnaire, exploration call and System Diagnosis differ?", answer: "The free questionnaire offers a limited exploratory hypothesis. The free exploration call checks mutual fit and a useful next step; it does not promise a diagnosis. System Diagnosis is a paid, standalone investigation of evidence and stakeholder perspectives, including priorities and the design of a first experiment ready to execute." },
+  { question: "How is Learning Lab different from System Diagnosis?", answer: "System Diagnosis includes designing the first experiment. Learning Lab accompanies execution and multiple cycles of review and adjustment, seeking observable improvement and the team's ability to continue. Experiments can fail and results are not guaranteed. A full diagnosis is not mandatory when sufficient evidence and a concrete change to test already exist." },
+  { question: "Is Learning Lab the same as strategy work?", answer: "No. Learning Lab emphasizes experimentation and continuous learning within an agreed scope. Organizational Strategy & Design emphasizes priorities, trade-offs and aligning roles, authority and practices with those priorities. Organization size alone does not determine the service." },
+  { question: "Do we need to know exactly what the problem is before booking facilitation?", answer: "No. A facilitated conversation can help discover and frame the problem, explore perspectives, build agreements or make decisions. Extensive investigation or implementation may need a separate scope." },
+  { question: "What formats are available for working together?", answer: commercial.collaboration.description + " " + commercial.collaboration.invitation },
+  { question: "Can new clients use a block of hours?", answer: "Yes, when there is a clear need. We agree the hours, activities, availability and period of use. You do not need to be a returning client." },
+  { question: "What can a monthly collaboration include?", answer: "Recurring advice or responsibility for a defined area of work, with dedication, priorities and review points agreed together." },
+  { question: "Is Alex open to full-time roles?", answer: "Yes. Alex is open to joining an organization where there is a strong mutual fit. Responsibilities, dedication and compensation are discussed separately from consulting project prices." },
+  { question: "Do the public prices apply to every format?", answer: commercial.priceInterpretation },
+  { question: "Are diagnostic answers shared with Alex?", answer: "No. Answers are processed in browser memory and are not sent to Alex, an LLM or analytics. Refreshing or closing the page may erase progress. Copying a machine-readable summary is optional and excludes open-text answers." },
+  { question: "Can an AI agent arrange an engagement?", answer: commercial.agentInstructions },
+  { question: "Is project information confidential?", answer: commercial.confidentiality.description },
+  { question: "Are impact discounts or pro-bono engagements available?", answer: commercial.impactPricing.description },
+);
+
+// Migrate relationship IDs while leaving factual experience and article copy intact.
+const migrateIds = (ids) => [...new Set(ids.map((id) => legacyServiceIds[id] || id))];
+for (const record of [...methods, ...projects, ...articles, ...experience, ...practice.problems]) {
+  if (record.relatedServices) record.relatedServices = migrateIds(record.relatedServices);
+  if (record.evidenceFor) record.evidenceFor = migrateIds(record.evidenceFor);
+  if (record.evidence?.services) record.evidence.services = migrateIds(record.evidence.services);
+}
+practice.knowledgePage.evidence.articles.unshift("what-breaks-when-teams-try-to-coordinate");
 
 module.exports = {
   site,

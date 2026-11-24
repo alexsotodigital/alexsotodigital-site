@@ -5,6 +5,7 @@
   "description": "Static knowledge-base website for Alex Soto.",
   "scripts": {
     "build": "node scripts/build.js",
+    "test": "npm run build && node --test tests/*.test.* && python3 tests/check_html.py",
     "preview": "npm run build && python3 -m http.server 4173 -d dist",
     "dev": "npm run preview",
     "deploy:preview": "npm run build",

@@ -26,8 +26,8 @@ jobs:
         with:
           node-version: 20
 
-      - name: Build static site
-        run: npm run build
+      - name: Build and verify static site
+        run: npm test
 
       - name: Install upload helpers
         run: npm install --no-save form-data recursive-fs base-path-converter got@11

@@ -1,0 +1,38 @@
+.diagnostic-page { background: var(--bg); }
+.diagnostic-topbar { max-width: 1080px; margin: 0 auto; padding: 1rem 1.5rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; border-bottom: 1px solid var(--border); }
+.diagnostic-brand { display: flex; align-items: center; gap: .75rem; font-weight: 700; }
+.diagnostic-brand img { width: 40px; height: 40px; image-rendering: pixelated; }
+.diagnostic-main { max-width: 780px; margin: 0 auto; padding: 2rem 1.5rem; min-width: 0; }
+.diagnostic [hidden] { display: none !important; }
+.diagnostic h1 { font-size: 2.25rem; line-height: 1.15; max-width: none; }
+.diagnostic h2 { font-size: 1.35rem; line-height: 1.4; }
+.diagnostic h3 { font-size: 1.1rem; line-height: 1.45; margin-top: 1.5rem; }
+.diagnostic p, .diagnostic li, .diagnostic label, .diagnostic button { font-size: 1rem; }
+.diagnostic :is(p, li, h1, h2, h3, label, button, a, summary) { overflow-wrap: anywhere; }
+.diagnostic-heading { margin-bottom: 1.75rem; }
+.diagnostic details { margin: 1.5rem 0; }
+.diagnostic summary { cursor: pointer; }
+.diagnostic #diagnostic-start { margin-top: .75rem; }
+.diagnostic #diagnostic-progress { color: var(--accent-dark); border-top: 2px dotted var(--accent); padding-top: 1rem; }
+.diagnostic-options { display: grid; gap: .55rem; margin: 1.25rem 0; }
+.diagnostic-options label { display: flex; align-items: flex-start; gap: .75rem; padding: .8rem 1rem; border: 1px solid var(--border); border-radius: 4px; cursor: pointer; min-height: 48px; }
+.diagnostic-options label:has(input:checked) { border-color: var(--accent-dark); background: var(--white); box-shadow: inset 3px 0 var(--accent-dark); }
+.diagnostic-options input { flex: 0 0 auto; margin-top: .25rem; width: 1.15rem; height: 1.15rem; accent-color: var(--accent-dark); }
+.diagnostic textarea { width: 100%; max-width: 100%; box-sizing: border-box; padding: .8rem; font: inherit; border: 1px solid var(--accent); border-radius: 4px; background: var(--white); color: var(--text); }
+.diagnostic button { font: inherit; cursor: pointer; }
+.diagnostic .diagnostic-controls { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; margin: 1rem 0; }
+.diagnostic .button { min-width: 0; white-space: normal; }
+.diagnostic .diagnostic-reset { border: 0; background: transparent; color: var(--accent-dark); text-decoration: underline; padding: .6rem 0; text-align: left; }
+.diagnostic :is(button, input, textarea, summary, a):focus-visible { outline: 3px solid var(--accent-dark); outline-offset: 3px; }
+.diagnostic [tabindex="-1"] { scroll-margin-top: 1rem; }
+.diagnostic #diagnostic-feedback { min-height: 1.5em; color: var(--text); font-weight: 600; }
+.diagnostic pre { white-space: pre-wrap; overflow-wrap: anywhere; font-size: .875rem; }
+.diagnostic dt { font-weight: 600; margin-top: .5rem; }
+.diagnostic dd { margin: .2rem 0; }
+.diagnostic-result-actions { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1.5rem; align-items: center; }
+@media (max-width: 600px) {
+  .diagnostic-topbar { padding: .75rem 1rem; font-size: .875rem; }
+  .diagnostic-main { padding: 1.5rem 1rem; }
+  .diagnostic h1 { font-size: 1.8rem; }
+  .diagnostic-options label { padding: .75rem; }
+}

@@ -149,6 +149,17 @@ dd code {
   gap: 0.2rem;
 }
 
+.mobile-navigation {
+  display: none;
+}
+
+.service-details summary {
+  cursor: pointer;
+  color: var(--accent-dark);
+  font-weight: 600;
+  padding: 0.5rem 0;
+}
+
 .main-nav a {
   border-left: 2px solid transparent;
   color: var(--text);
@@ -690,10 +701,29 @@ code {
     border-bottom: 1px solid var(--border);
   }
 
+  .desktop-identity {
+    display: none;
+  }
+
+  .mobile-navigation {
+    display: block;
+  }
+
+  .mobile-navigation summary {
+    cursor: pointer;
+    padding: 0.65rem 0;
+    font-weight: 600;
+  }
+
+  .mobile-location {
+    margin-bottom: 0;
+  }
+
   .brand {
     display: grid;
     grid-template-columns: 96px minmax(0, 1fr);
     gap: 0.2rem 1rem;
+    margin-bottom: 0.75rem;
   }
 
   .pfp-rail {

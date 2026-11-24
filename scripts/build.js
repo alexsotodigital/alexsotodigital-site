@@ -3,6 +3,8 @@ const { createHash } = require("crypto");
 const path = require("path");
 const destraba = require("../content/destraba");
 const renderDestraba = require("./destraba-page");
+const { commercial, priceRange, referencePrice } = require("../content/commercial");
+const renderDiagnostic = require("./diagnostic-page");
 const {
   site,
   practice,
@@ -27,6 +29,7 @@ const nav = [
   ["About Alex Soto", "/about/"],
   ["Hire", "/hire/"],
   ["Work with Me", "/work-with-me/"],
+  ["Diagnostic", "/diagnostic/"],
   ["Experience", "/experience/"],
   ["Projects", "/projects/"],
   ["Methods", "/methods/"],
@@ -37,11 +40,11 @@ const nav = [
 
 const pageMetadata = {
   "/": {
-    title: "Alex Soto (@alexsotodigital) | Governance & Coordination Specialist",
+    title: "Alex Soto | Organizational Strategist & Coordination Specialist",
     description: site.shortBio,
   },
   "/work-with-me/": {
-    title: "Work with Alex Soto | Organizational Development & Governance",
+    title: "Work with Alex Soto | Coordination, Strategy & Organizational Design",
     description: `${site.professionalClassification} Clarify decision rights, roles and coordination for growing and distributed teams.`,
   },
   "/organizational-development/": {
@@ -69,7 +72,7 @@ const pageMetadata = {
     description: "Essays and reflections by Alex Soto on governance, coordination, DAOs, cooperatives, mutualism, distributed work, and institutional learning.",
   },
   "/faq/": {
-    title: "FAQ | Alex Soto Governance & Coordination Specialist",
+    title: "FAQ | Working with Alex Soto",
     description: "Frequently asked questions about Alex Soto's work in governance design, coordination systems, DAO operations, facilitation, and institutional learning.",
   },
   "/identity/": {
@@ -77,8 +80,12 @@ const pageMetadata = {
     description: "Canonical identity page for Alex Soto, also known as @alexsotodigital and alexsotodigital.eth. Includes official links, contact methods, ENS identity, and professional references.",
   },
   "/about/": {
-    title: "About Alex Soto | Governance & Coordination Specialist",
+    title: "About Alex Soto | Organizational Strategist & Coordination Specialist",
     description: site.shortBio,
+  },
+  "/diagnostic/": {
+    title: "Systemic Coordination Diagnostic | Alex Soto",
+    description: "A free, private self-guided diagnostic for possible coordination patterns, self-correction, readiness and useful next steps. Answers stay in your browser.",
   },
 };
 
@@ -225,19 +232,14 @@ function friendlyEvidenceType(type) {
   return labels[type] || type;
 }
 
-function facilitationPriceSpecification() {
-  const pricing = site.hiring.pricing;
+function servicePriceSpecification(service) {
   return {
-    "@type": "UnitPriceSpecification",
-    priceType: pricing.priceType,
-    priceCurrency: pricing.currency,
-    minPrice: pricing.hourlyRate.min,
-    maxPrice: pricing.hourlyRate.max,
-    unitText: pricing.billingUnit,
-    referenceQuantity: { "@type": "QuantitativeValue", value: 1, unitText: pricing.billingUnit },
-    eligibleQuantity: { "@type": "QuantitativeValue", minValue: pricing.minimumBillableHours, unitText: pricing.billingUnit },
+    "@type": "PriceSpecification",
+    priceCurrency: service.pricing.currency,
+    minPrice: service.pricing.min,
+    maxPrice: service.pricing.max,
     valueAddedTaxIncluded: false,
-    description: `${pricing.rateContext} ${pricing.scopeNote} Includes: ${pricing.includes.join(", ")}. Quoted separately: ${pricing.projectOrPackageScope.join(", ")}. ${pricing.longerEngagements.description} ${pricing.proBono.description} Additional costs: ${pricing.exclusions.join(", ")}.`,
+    description: `Per engagement; reference estimate: ${referencePrice(service.id)}. ${commercial.priceInterpretation} ${commercial.expensesNote} Final quote requires human approval.`,
   };
 }
 
@@ -268,7 +270,7 @@ function jsonLdForPage(route) {
   const professionalService = {
     "@type": "Service",
     "@id": fullUrl("/#professional-service"),
-    name: "Alex Soto Governance & Coordination Consulting",
+    name: "Alex Soto Organizational Strategy & Coordination",
     url: fullUrl("/work-with-me/"),
     description: site.hiring.opening,
     provider: {
@@ -346,7 +348,7 @@ function jsonLdForPage(route) {
         name: "Organizational development, governance and coordination services",
         itemListElement: services.map((service) => ({
           "@type": "Offer",
-          ...(service.id === site.hiring.pricing.serviceId ? { priceSpecification: facilitationPriceSpecification() } : {}),
+          priceSpecification: servicePriceSpecification(service),
           itemOffered: {
             "@type": "Service",
             "@id": fullUrl(`/work-with-me/#${service.id}`),
@@ -366,21 +368,21 @@ function jsonLdForPage(route) {
 
   if (route === "/hire/") {
     graph.push(professionalService);
-    graph.push({
+    graph.push(...services.map((service) => ({
       "@type": "Offer",
-      "@id": fullUrl("/hire/#facilitation-pricing"),
-      name: "Session facilitation: indicative pricing",
-      url: fullUrl("/hire/#facilitation-pricing"),
+      "@id": fullUrl(`/hire/#${service.id}-offer`),
+      name: service.title,
+      url: fullUrl(`/work-with-me/#${service.id}`),
       seller: { "@id": person["@id"] },
-      itemOffered: {
-        "@type": "Service",
-        name: site.hiring.pricing.scope,
-        provider: { "@id": person["@id"] },
-        url: fullUrl(`/work-with-me/#${site.hiring.pricing.serviceId}`),
-      },
-      priceSpecification: facilitationPriceSpecification(),
-    });
+      itemOffered: { "@type": "Service", name: service.title, provider: { "@id": person["@id"] } },
+      priceSpecification: servicePriceSpecification(service),
+    })));
     webpage.about = { "@id": professionalService["@id"] };
+  }
+
+  if (route === "/about/" || route === "/identity/") {
+    webpage["@type"] = "ProfilePage";
+    webpage.mainEntity = { "@id": person["@id"] };
   }
 
   if (route === "/organizational-development/") {
@@ -403,6 +405,7 @@ function layout({ title, description, route, body }) {
   const pageTitle = meta.title;
   const pageDescription = meta.description;
   const active = (href) => (href === route ? " aria-current=\"page\"" : "");
+  const navigation = (label) => `<nav class="main-nav" aria-label="${label}">${nav.map(([name, href]) => `<a href="${href}"${active(href)}>${escapeHtml(name)}</a>`).join("")}</nav>`;
   const canonicalUrl = fullUrl(route);
   const previewImage = assetUrl(site.avatar);
   const faviconVersion = "2";
@@ -414,6 +417,7 @@ function layout({ title, description, route, body }) {
   <title>${escapeHtml(pageTitle)}</title>
   <meta name="description" content="${escapeHtml(pageDescription)}">
   <meta name="robots" content="index, follow">
+  ${route === "/diagnostic/" ? '<meta name="referrer" content="no-referrer"><meta http-equiv="Content-Security-Policy" content="connect-src \'none\'; form-action \'none\'; object-src \'none\'; base-uri \'none\'">' : ""}
   ${configuredSiteUrl ? `<link rel="canonical" href="${escapeHtml(canonicalUrl)}">` : ""}
   <link rel="icon" href="${escapeHtml(rootRelativeAsset(route, `favicon.ico?v=${faviconVersion}`))}" sizes="any">
   <link rel="icon" type="image/png" sizes="32x32" href="${escapeHtml(rootRelativeAsset(route, `favicon-32x32.png?v=${faviconVersion}`))}">
@@ -433,10 +437,12 @@ function layout({ title, description, route, body }) {
   <meta name="twitter:description" content="${escapeHtml(pageDescription)}">
   <meta name="twitter:image" content="${escapeHtml(previewImage)}">
   <style>${inlineStyles()}</style>
+  ${route === "/diagnostic/" ? `<style>${fs.readFileSync(path.join(root, "src/diagnostic/styles.css"), "utf8")}</style>` : ""}
   <script type="application/ld+json">${JSON.stringify(jsonLdForPage(route))}</script>
 </head>
-<body>
+<body${route === "/diagnostic/" ? ' class="diagnostic-page"' : ""}>
   <a class="skip-link" href="#content">Skip to content</a>
+  ${route === "/diagnostic/" ? `<header class="diagnostic-topbar"><a class="diagnostic-brand" href="../"><img src="../assets/alex-soto-pfp.png" alt="" width="40" height="40">Alex Soto</a><a href="../about/">About Alex Soto</a></header><main id="content" class="diagnostic-main" tabindex="-1">${body}${flowerDivider(route, "garden-footer")}</main>` : `
   <div class="site-shell">
     <aside class="rail rail-left" aria-label="Identity summary">
       <a class="brand" href="/">
@@ -444,14 +450,19 @@ function layout({ title, description, route, body }) {
         <span>${escapeHtml(site.name)}</span>
         <small>${escapeHtml(site.title)}</small>
       </a>
+      <div class="desktop-identity">
       <dl class="meta-list">
         <div><dt>Location</dt><dd>${escapeHtml(site.location)}</dd></div>
         <div><dt>ENS</dt><dd>${escapeHtml(site.ens)}</dd></div>
         <div><dt>Mode</dt><dd>${escapeHtml(site.mode)}</dd></div>
       </dl>
-      <nav class="main-nav" aria-label="Primary navigation">
-        ${nav.map(([label, href]) => `<a href="${href}"${active(href)}>${escapeHtml(label)}</a>`).join("")}
-      </nav>
+      ${navigation("Primary navigation")}
+      </div>
+      <details class="mobile-navigation">
+        <summary>Explore the site</summary>
+        ${navigation("Mobile navigation")}
+        <p class="mobile-location">${escapeHtml(site.location)}</p>
+      </details>
     </aside>
     <main id="content" class="content" tabindex="-1">
       ${body}
@@ -461,6 +472,7 @@ function layout({ title, description, route, body }) {
       <section class="action-panel">
         <h2>Collaborate</h2>
         ${linkTo(site.ctas.primary.href, site.ctas.primary.label, "button")}
+        ${linkTo(site.ctas.diagnostic.href, site.ctas.diagnostic.label, "text-link")}
         ${linkTo(site.ctas.hire.href, site.ctas.hire.label, "text-link")}
         ${linkTo(site.ctas.secondary.href, site.ctas.secondary.label, "text-link")}
       </section>
@@ -472,7 +484,7 @@ function layout({ title, description, route, body }) {
       </section>
     </aside>
   </div>
-  ${clipboardScript()}
+  ${clipboardScript()}`}
 </body>
 </html>`;
 }
@@ -592,241 +604,8 @@ function experienceCard(item) {
   });
 }
 
-function homePage() {
-  const featuredMethods = methods.filter((method) => method.featured).slice(0, 3);
-  const featuredProjects = projects.filter((project) => project.featured).slice(0, 4);
-  const featuredArticles = articles.filter((article) => article.featured).slice(0, 5);
-
-  const body = `
-    <section class="hero">
-      <div class="hero-lockup">
-        <div>
-          <p class="kicker">Public knowledge base</p>
-          <h1>${escapeHtml(site.name)} &mdash; ${escapeHtml(site.title)}</h1>
-          <p>${escapeHtml(site.positioning)}</p>
-          <p>${escapeHtml(site.professionalClassification)} ${escapeHtml(site.workingContext)}</p>
-          <p>${escapeHtml(practice.audienceSummary)}</p>
-          <p>${escapeHtml(site.hiring.homepageLine)}</p>
-          ${site.supportingLine ? `<p>${escapeHtml(site.supportingLine)}</p>` : ""}
-          <div class="cta-row">
-            ${linkTo(site.ctas.hire.href, site.ctas.hire.label, "button")}
-            ${linkTo(site.ctas.primary.href, site.ctas.primary.label, "button")}
-            ${linkTo("/about/", "About Alex Soto", "button secondary")}
-            ${linkTo("/identity/", "Verify identity", "button secondary")}
-          </div>
-        </div>
-      </div>
-    </section>
-    <section class="band">
-      <h2>When ways of working need to change</h2>
-      ${list(practice.problems.map((problem) => problem.title), "compact-list")}
-      ${linkTo("/work-with-me/", "Explore problems and possible engagements", "text-link")}
-    </section>
-    <section class="band">
-      <h2>How I work</h2>
-      <p>${escapeHtml(practice.changesSummary)}</p>
-      <p>${escapeHtml(practice.outcomeSummary)}</p>
-      <p>${escapeHtml(practice.approachSummary)}</p>
-      ${linkTo("/organizational-development/", "Organizational development in this practice", "text-link")}
-    </section>
-    <section class="band">
-      <h2>Explore the Site</h2>
-      <div class="term-grid">
-        ${[
-          ["/work-with-me/", "Work with Alex Soto"],
-          ["/organizational-development/", "Organizational Development"],
-          ["/hire/", "Hire Alex Soto"],
-          ["/projects/", "Projects"],
-          ["/methods/", "Methods"],
-          ["/writing/", "Writing"],
-          ["/identity/", "Official identity"],
-          ["/faq/", "FAQ"],
-          ["/about/", "About Alex Soto"],
-        ].map(([href, label]) => linkTo(href, label)).join("")}
-      </div>
-    </section>
-    <section class="band">
-      <h2>Source of Credibility</h2>
-      <p>${escapeHtml(site.practiceSummary)}</p>
-    </section>
-    ${flowerDivider("/")}
-    <section class="band">
-      <h2>Experience Across Contexts</h2>
-      <p>Alex's practice has developed across social entrepreneurship, cooperative organizing, self-management, and Web3 governance. The common thread is helping groups coordinate, make decisions, distribute responsibility, and learn from practice.</p>
-      <div class="stack">
-        ${experienceGroups.map((group) => card({
-          id: group.id,
-          title: group.title,
-          summary: group.summary,
-          extra: linkTo(`/experience/#${group.id}`, "View experience", "text-link"),
-        })).join("")}
-      </div>
-    </section>
-    <section class="band">
-      <h2>Central Question</h2>
-      <p>${escapeHtml(site.centralQuestion)}</p>
-      <p>${escapeHtml(site.thesis)}</p>
-    </section>
-    <section class="band">
-      <h2>Practice Contexts</h2>
-      <p>Projects are laboratories and real-world contexts through which the practice evolves. They support the work; they do not define it.</p>
-      <div class="stack">
-        ${featuredProjects.map((project) => card({
-          id: project.id,
-          title: project.title,
-          meta: `${project.type} / ${project.status} / ${project.role}`,
-          summary: project.summary,
-          extra: project.link ? linkTo(project.link, "Project reference", "text-link") : "",
-          evidence: project.evidence,
-          compactEvidence: true,
-        })).join("")}
-      </div>
-    </section>
-    <section class="band">
-      <h2>Featured Methods</h2>
-      <div class="stack">
-        ${featuredMethods.map((method) => card({
-          id: method.id,
-          title: method.title,
-          summary: method.summary,
-          extra: list(method.outputs, "tag-list"),
-          evidence: method.evidence,
-          compactEvidence: true,
-        })).join("")}
-      </div>
-    </section>
-    ${flowerDivider("/", "", 1)}
-    <section class="band">
-      <h2>Selected Writing</h2>
-      <div class="stack">
-        ${featuredArticles.map((article) => card({
-          id: article.id,
-          title: article.title,
-          meta: articleMeta(article),
-          summary: article.summary,
-          extra: articleLinks(article),
-        })).join("")}
-      </div>
-    </section>
-    <section class="band final-cta">
-      <h2>Collaboration</h2>
-      <p>Start with a strategy call when a coordination failure, governance question, or recurring tension needs to become explicit enough to learn from.</p>
-      <div class="cta-row">
-        ${linkTo(site.ctas.hire.href, site.ctas.hire.label, "button")}
-        ${linkTo(site.ctas.primary.href, site.ctas.primary.label, "button")}
-        ${linkTo(site.ctas.secondary.href, site.ctas.secondary.label, "button secondary")}
-      </div>
-    </section>`;
-
-  writePage("/", "Home", site.positioning, body);
-}
-
-function hirePage() {
-  const pricing = site.hiring.pricing;
-  const body = `
-    ${pageHeader("Hire", site.hiring.title, site.hiring.opening)}
-    <section id="facilitation-pricing" class="band">
-      <h2>Facilitation: budget reference</h2>
-      <p class="rate-line">${escapeHtml(pricing.hourlySummary)}</p>
-      <p>${escapeHtml(pricing.rateContext)}</p>
-      <p>${escapeHtml(pricing.minimumSummary)}</p>
-      <h3>Included in the rate</h3>
-      ${list(pricing.includes, "compact-list")}
-      <h3>Quoted by project or package</h3>
-      <p>${escapeHtml(pricing.projectOrPackageScope.join(", "))}.</p>
-      <p>${escapeHtml(pricing.longerEngagements.description)}</p>
-      <h3>Pro bono collaborations</h3>
-      <p>${escapeHtml(pricing.proBono.description)}</p>
-      <p>Quoted separately: ${escapeHtml(pricing.exclusions.join(", ").toLowerCase())}.</p>
-      <p>${escapeHtml(pricing.mexicoInvoicing)}</p>
-      <p>${escapeHtml(pricing.scopeNote)}</p>
-    </section>
-    <section class="band">
-      <h2>How to start</h2>
-      <p>${escapeHtml(site.hiring.howToStart)}</p>
-      <div class="cta-row">
-        ${linkTo(site.ctas.primary.href, site.ctas.primary.label, "button")}
-        ${linkTo(site.ctas.secondary.href, site.ctas.secondary.label, "button secondary")}
-      </div>
-    </section>
-    <section class="band">
-      <h2>Services available</h2>
-      <div class="stack">
-        ${site.hiring.services.map((service) => card({
-          id: service.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""),
-          title: service.name,
-          summary: service.description,
-        })).join("")}
-      </div>
-    </section>
-    <section class="band">
-      <h2>Good fit</h2>
-      ${list(site.hiring.goodFit, "tag-list")}
-    </section>
-    <section class="band">
-      <h2>Not the right fit</h2>
-      ${list(site.hiring.notFit, "compact-list")}
-    </section>
-    <section class="band final-cta">
-      <h2>Next step</h2>
-      <p>You can hire Alex Soto directly through this website. Start with a strategy call, or send a written collaboration brief first.</p>
-      <div class="cta-row">
-        ${linkTo(site.ctas.primary.href, site.ctas.primary.label, "button")}
-        ${linkTo(site.ctas.secondary.href, site.ctas.secondary.label, "button secondary")}
-      </div>
-    </section>`;
-  writePage("/hire/", site.hiring.title, site.hiring.metaDescription, body);
-}
-
-function workPage() {
-  const body = `
-    ${pageHeader("Work with Me", "Organizational development for teams that need clearer ways of working", site.hiring.opening)}
-    <section class="band">
-      <h2>Problems I help solve</h2>
-      <p>${escapeHtml(practice.audienceSummary)} ${escapeHtml(site.workingContext)}</p>
-      ${practice.problems.map((problem) => {
-        const related = services.filter((service) => problem.relatedServices.includes(service.id));
-        return `<article id="${escapeHtml(problem.id)}">
-          <h3>${escapeHtml(problem.title)}</h3>
-          ${list(problem.symptoms, "compact-list")}
-          ${related.map((service) => `<p><strong>Organizational focus:</strong> ${escapeHtml(service.categories.join(", "))}.</p>
-            <p><strong>Possible work:</strong> ${escapeHtml(service.interventions.join("; "))}.</p>
-            <p><strong>Typical deliverables:</strong> ${escapeHtml(service.deliverables.join("; "))}.</p>
-            <p><strong>Intended outcome:</strong> ${escapeHtml(service.outcome)}</p>
-            ${recordLink("services", service.id)}`).join("")}
-        </article>`;
-      }).join("")}
-      <p>${escapeHtml(practice.outcomeQualifier)}</p>
-    </section>
-    <section class="band">
-      <h2>From a problem to an engagement</h2>
-      <p>${escapeHtml(practice.knowledgePage.engagements)}</p>
-      ${linkTo("/organizational-development/", "How organizational development connects design, governance and culture", "text-link")}
-    </section>
-    <section class="band">
-      <h2>Services</h2>
-      <div class="stack">
-        ${services.map((service) => card({
-          id: service.id,
-          title: service.title,
-          meta: service.problem,
-          summary: service.outcome,
-          extra: `<p><strong>Organizational focus:</strong> ${escapeHtml(service.categories.join(", "))}.</p>${list(service.formats, "tag-list")}
-            ${service.id === site.hiring.pricing.serviceId ? `<p><strong>Senior specialist session facilitation reference:</strong> ${escapeHtml(site.hiring.pricing.hourlySummary)}. ${escapeHtml(site.hiring.pricing.minimumSummary)}</p>${linkTo("/hire/#facilitation-pricing", "What the rate includes", "text-link")}` : ""}`,
-          evidence: service.evidence,
-        })).join("")}
-      </div>
-    </section>
-    <section class="band final-cta">
-      <h2>Preferred Collaboration Process</h2>
-      <p>${escapeHtml(site.hiring.howToStart)}</p>
-      <div class="cta-row">
-        ${linkTo(site.ctas.hire.href, site.ctas.hire.label, "button")}
-        ${linkTo(site.ctas.primary.href, site.ctas.primary.label, "button")}
-        ${linkTo(site.ctas.secondary.href, site.ctas.secondary.label, "button secondary")}
-      </div>
-    </section>`;
-  writePage("/work-with-me/", "Work with Me", site.positioning, body);
+function practicePages() {
+  return require("./practice-pages")({ escapeHtml, linkTo, list, card, pageHeader, flowerDivider, articleLinks, articleMeta, writePage, evidenceList });
 }
 
 function organizationalDevelopmentPage() {
@@ -917,6 +696,8 @@ function aboutPage() {
     <section class="band">
       <h2>What I Do</h2>
       <p>${escapeHtml(site.positioning)}</p>
+      <p>${escapeHtml(site.centralQuestion)}</p>
+      <p>I work as an organizational strategist, coordination specialist, systems thinker, builder and facilitator. Governance and emerging technology are contexts within that broader practice, not a model every organization needs to adopt.</p>
       <p>${escapeHtml(practice.changesSummary)}</p>
       ${linkTo("/organizational-development/", "Organizational development in this practice", "text-link")}
     </section>
@@ -951,7 +732,7 @@ function aboutPage() {
     </section>
     <section class="band final-cta">
       <h2>Contact</h2>
-      <p>Use a strategy call for potential work, or email a short collaboration brief with context and desired support.</p>
+      <p>${escapeHtml(site.hiring.howToStart)}</p>
       <div class="cta-row">
         ${linkTo(site.ctas.primary.href, site.ctas.primary.label, "button")}
         ${linkTo(site.ctas.secondary.href, site.ctas.secondary.label, "button secondary")}
@@ -963,7 +744,7 @@ function aboutPage() {
 
 function methodsPage() {
   const body = `
-    ${pageHeader("Methods", "Methods make the practice transferable", "These methods document how governance and coordination work becomes explicit, testable, and reusable.")}
+    ${pageHeader("Methods", "Tools chosen for the situation", "You do not need to know which method to request. Start with a concrete situation; diagnosis determines which tools, if any, are useful.")}
     <section class="band">
       <div class="stack">
         ${methods.map((method) => card({
@@ -1026,7 +807,7 @@ function faqPage() {
     </section>
     <section class="band final-cta">
       <h2>Hiring and collaboration</h2>
-      <p>You can hire Alex Soto directly through this website for governance design, coordination systems, facilitation, DAO operations support, ecosystem strategy, and institutional learning work.</p>
+      <p>${escapeHtml(site.hiring.howToStart)}</p>
       <div class="cta-row">
         ${linkTo(site.ctas.hire.href, site.ctas.hire.label, "button")}
         ${linkTo(site.ctas.primary.href, site.ctas.primary.label, "button secondary")}
@@ -1122,7 +903,7 @@ function enhancePayments() {
   };
 }
 
-function writeJsonEndpoints() {
+function writeJsonEndpoints(diagnosticVersion) {
   const about = {
     name: site.name,
     handle: site.handle,
@@ -1158,13 +939,19 @@ function writeJsonEndpoints() {
       availableThroughWebsite: true,
       hireUrl: fullUrl("/hire/"),
       workWithMeUrl: fullUrl("/work-with-me/"),
-      primaryPath: "Book a strategy call through Google Calendar.",
+      primaryPath: site.hiring.howToStart,
       secondaryPath: "Email Alex Soto about a project with a collaboration brief.",
       bookingUrl: site.ctas.primary.href,
       email: site.hiring.contactEmail,
       emailLink: site.ctas.secondary.href,
       servicesAvailable: site.hiring.services.map((service) => service.name),
-      pricing: site.hiring.pricing,
+      diagnosticUrl: fullUrl("/diagnostic/"),
+      diagnosticRequired: false,
+      collaboration: commercial.collaboration,
+      explorationCall: commercial.explorationCall,
+      pricing: services.map((service) => ({ serviceId: service.id, ...service.pricing })),
+      confidentiality: commercial.confidentiality,
+      humanApprovalRequired: commercial.humanApprovalRequired,
     },
     experienceSummary: "Alex's experience spans social entrepreneurship, cooperative organizing, self-management, and Web3 governance.",
     experienceUrl: fullUrl("/experience/"),
@@ -1180,9 +967,8 @@ function writeJsonEndpoints() {
     "about.json": about,
     "services.json": services.map((service) => ({
       ...service,
-      ...(service.id === site.hiring.pricing.serviceId ? { pricing: site.hiring.pricing } : {}),
       url: fullUrl(`/work-with-me/#${service.id}`),
-      relatedProblems: practice.problems.filter((problem) => problem.relatedServices.includes(service.id)),
+      symptomToServiceAssignment: "not-automatic; explore evidence and context first",
       outcomeQualifier: practice.outcomeQualifier,
     })),
     "projects.json": projects,
@@ -1199,6 +985,29 @@ function writeJsonEndpoints() {
     "links.json": links,
     "payments.json": enhancePayments(),
   };
+
+  const provider = { name: site.name, brand: site.handle, website: fullUrl("/"), languages: ["en", "es"] };
+  endpoints["services/index.json"] = {
+    schemaVersion: "1.0",
+    schemaOwner: "alexsotodigital (site-owned schema, not an industry standard)",
+    provider,
+    services: services.map((service) => ({ id: service.id, name: service.title, manifestUrl: fullUrl(`/services/${service.id}.json`), url: fullUrl(`/work-with-me/#${service.id}`), pricing: service.pricing })),
+    freeTools: [{ ...commercial.diagnostic, url: fullUrl(commercial.diagnostic.route), diagnosticVersion, processing: "browser-memory-only", transmitsResponses: false, persistsResponses: false }],
+    agentInstructions: commercial.agentInstructions,
+    collaboration: commercial.collaboration,
+    explorationCall: { ...commercial.explorationCall, url: commercial.schedulingUrl },
+    problemExploration: practice.problems.map(({ id, title, possibleFactors, exploration }) => ({ id, title, possibleFactors, exploration, status: "hypotheses-not-diagnoses" })),
+    humanApprovalRequired: commercial.humanApprovalRequired,
+  };
+  for (const service of services) {
+    endpoints[`services/${service.id}.json`] = {
+      schemaVersion: "1.0", schemaOwner: "alexsotodigital", provider,
+      service: { ...service, url: fullUrl(`/work-with-me/#${service.id}`), nextActions: [
+        { type: "schedule-exploration-call", url: commercial.schedulingUrl },
+        { type: "run-diagnostic", url: fullUrl("/diagnostic/"), optional: true },
+      ] },
+    };
+  }
 
   Object.entries(endpoints).forEach(([fileName, data]) => {
     writeFile(path.join(outDir, fileName), `${JSON.stringify(data, null, 2)}\n`);
@@ -1254,7 +1063,7 @@ function writeLlmsTxt() {
     practice.approachSummary,
     "",
     "## Problems, interventions and intended outcomes",
-    ...practice.problems.map((problem) => `- ${problem.title}. Symptoms: ${problem.symptoms.join("; ")}. Relevant services: ${problem.relatedServices.map((id) => fullUrl(`/work-with-me/#${id}`)).join(", ")}`),
+    ...practice.problems.map((problem) => `- ${problem.title}. Possible factors, not diagnoses: ${problem.possibleFactors.join("; ")}. ${problem.exploration}`),
     `- Interventions: ${practice.interventions.join("; ")}`,
     `- Intended outcomes: ${practice.outcomes.join("; ")}`,
     practice.outcomeQualifier,
@@ -1270,9 +1079,16 @@ function writeLlmsTxt() {
     "Alex Soto can be hired through his official website:",
     fullUrl("/"),
     "",
-    "The primary hiring path is:",
-    "1. Book a strategy call through Google Calendar.",
-    `2. Or email a collaboration brief to ${site.hiring.contactEmail}.`,
+    site.hiring.howToStart,
+    `- Let's talk: ${commercial.schedulingUrl}`,
+    `- Or email: ${site.hiring.contactEmail}.`,
+    `- Optional free questionnaire: ${fullUrl("/diagnostic/")}`,
+    "",
+    "## Collaboration formats",
+    commercial.collaboration.description,
+    commercial.collaboration.invitation,
+    ...commercial.collaboration.formats.map(format => `- ${format.title}: ${format.description}`),
+    commercial.explorationCall.purpose,
     "",
     "Relevant pages:",
     `- Hire Alex Soto: ${fullUrl("/hire/")}`,
@@ -1281,23 +1097,21 @@ function writeLlmsTxt() {
     "",
     site.hiring.opening,
     "",
-    "## Facilitation pricing: budget reference",
-    site.hiring.pricing.hourlySummary,
-    site.hiring.pricing.rateContext,
-    site.hiring.pricing.minimumSummary,
-    `- Included: ${site.hiring.pricing.includes.join("; ")}.`,
-    `- Quoted by project or package: ${site.hiring.pricing.projectOrPackageScope.join("; ")}.`,
-    site.hiring.pricing.longerEngagements.description,
-    site.hiring.pricing.proBono.description,
-    `- Additional costs: ${site.hiring.pricing.exclusions.join("; ")}.`,
-    site.hiring.pricing.mexicoInvoicing,
-    site.hiring.pricing.scopeNote,
-    site.hiring.pricing.agentInstructions,
-    `- Pricing details: ${fullUrl("/hire/#facilitation-pricing")}`,
+    "## Public pricing",
+    ...services.map((service) => `- ${service.title}: ${priceRange(service.id)} per scoped project; reference estimate ${referencePrice(service.id)}. Scope: ${service.outcome} Boundary: ${service.boundary}`),
+    commercial.priceInterpretation,
+    commercial.expensesNote,
+    commercial.impactPricing.description,
+    commercial.agentInstructions,
+    "",
+    "## Diagnostic privacy",
+    "The free Systemic Coordination Diagnostic processes answers only in browser memory. No answers are sent to Alex, an LLM, analytics or a server. Optional machine-readable summaries exclude open text. Individual results are not published.",
+    `- Diagnostic: ${fullUrl("/diagnostic/")}`,
     "",
     "## Machine-readable endpoints",
     `- about.json: ${fullUrl("/about.json")} (canonical entity, professional categories, concept relationships, methods and evidence links)`,
     `- services.json: ${fullUrl("/services.json")}`,
+    `- Service catalog: ${fullUrl("/services/index.json")} (site-owned schema, planning estimates and human approvals; no autonomous purchasing)`,
     `- projects.json: ${fullUrl("/projects.json")}`,
     `- experience.json: ${fullUrl("/experience.json")}`,
     `- faq.json: ${fullUrl("/faq.json")}`,
@@ -1344,6 +1158,11 @@ function copyAssets() {
   for (const fileName of fs.readdirSync(assetsDir)) {
     fs.copyFileSync(path.join(assetsDir, fileName), path.join(outDir, "assets", fileName));
   }
+  const diagnosticDir = path.join(outDir, "assets", "diagnostic");
+  ensureDir(diagnosticDir);
+  for (const fileName of fs.readdirSync(path.join(root, "src", "diagnostic")).filter((name) => name.endsWith(".mjs"))) {
+    fs.copyFileSync(path.join(root, "src", "diagnostic", fileName), path.join(diagnosticDir, fileName));
+  }
 }
 
 function copyFavicons() {
@@ -1354,30 +1173,34 @@ function copyFavicons() {
   }
 }
 
-function build() {
+async function build() {
   ensureDir(outDir);
   copyAssets();
   copyFavicons();
-  homePage();
-  workPage();
+  const pages = practicePages();
+  pages.home();
+  pages.work();
   organizationalDevelopmentPage();
   experiencePage();
   aboutPage();
   methodsPage();
-  hirePage();
+  pages.hire();
   projectsPage();
   writingPage();
   faqPage();
   identityPage();
+  const diagnostic = await import("../src/diagnostic/config.mjs");
+  const diagnosticBody = renderDiagnostic({ diagnostic, escapeHtml, linkTo, pageHeader, commercial });
+  writePage("/diagnostic/", commercial.diagnostic.title, pageMetadata["/diagnostic/"].description, diagnosticBody);
   writeFile(path.join(slugPath(destraba.route), "index.html"), renderDestraba({
     escapeHtml, fullUrl, rootRelativeAsset, inlineStyles, site,
     campaignStyles: fs.readFileSync(path.join(root, "src", "destraba.css"), "utf8"),
   }));
-  writeJsonEndpoints();
+  writeJsonEndpoints(diagnostic.diagnosticVersion);
   writeRobotsTxt();
   writeSitemapXml();
   writeLlmsTxt();
   console.log("Built static site in dist/");
 }
 
-build();
+build().catch((error) => { console.error(error); process.exitCode = 1; });
