@@ -56,20 +56,20 @@ const pageMetadata = {
     description: site.hiring.metaDescription,
   },
   "/experience/": {
-    title: "Experience | Alex Soto Governance & Coordination Practice",
-    description: "Experience informing Alex Soto's organizational development, governance and coordination practice: role mapping, self-management, facilitation, cooperatives and Web3 governance.",
+    title: "Experience | Alex Soto Organizational Strategy & Coordination",
+    description: "Professional experience informing Alex Soto's organizational strategy, coordination and organizational development practice across cooperatives, social entrepreneurship and Web3 governance.",
   },
   "/projects/": {
-    title: "Projects | Alex Soto Governance & Coordination Practice",
-    description: "Projects by Alex Soto, including applied work in governance, coordination systems, mutualism, institutional learning, Web3 ecosystems, and distributed organizations.",
+    title: "Projects | Alex Soto Organizational Strategy & Coordination",
+    description: "Projects and practice contexts where Alex Soto has tested ideas about organizational strategy, coordination, governance, mutualism and institutional learning.",
   },
   "/methods/": {
-    title: "Methods | Governance Reviews, Coordination Diagnostics & Institutional Learning",
-    description: "Methods used by Alex Soto: governance reviews, coordination diagnostics, facilitation and decision frameworks, and institutional learning loops for mission-driven organizations.",
+    title: "Methods | Organizational Strategy, Coordination & Governance",
+    description: "Context-dependent methods used by Alex Soto for organizational strategy, coordination, governance, facilitation, decision-making and institutional learning.",
   },
   "/writing/": {
     title: "Writing | Alex Soto on Governance, Coordination & Institutional Learning",
-    description: "Essays and reflections by Alex Soto on governance, coordination, DAOs, cooperatives, mutualism, distributed work, and institutional learning.",
+    description: "Essays by Alex Soto on organizational strategy, governance, coordination, DAOs, cooperatives, mutualism, distributed work and institutional learning.",
   },
   "/faq/": {
     title: "FAQ | Working with Alex Soto",
@@ -81,7 +81,7 @@ const pageMetadata = {
   },
   "/about/": {
     title: "About Alex Soto | Organizational Strategist & Coordination Specialist",
-    description: site.shortBio,
+    description: "About Alex Soto, an organizational strategist and coordination specialist working across organizational development, governance, facilitation and institutional learning.",
   },
   "/diagnostic/": {
     title: "Systemic Coordination Diagnostic | Alex Soto",
@@ -265,7 +265,9 @@ function jsonLdForPage(route) {
     url: fullUrl("/"),
     knowsAbout: [...new Set([...practice.categories, ...practice.adjacentCategories, ...practice.expertise, "DAO operations", "Web3 governance"])],
     contactPoint,
-    sameAs: links.filter((link) => link.href.startsWith("https://") && !link.purpose.includes("strategy call") && !link.purpose.includes("project")).map((link) => link.href),
+    sameAs: ["linkedin", "substack", "youtube", "x", "github", "ens"]
+      .map((id) => links.find((link) => link.id === id)?.href)
+      .filter(Boolean),
   };
   const professionalService = {
     "@type": "Service",

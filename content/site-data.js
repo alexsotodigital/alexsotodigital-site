@@ -10,7 +10,7 @@ const site = {
   title: "Organizational Strategist & Coordination Specialist",
   professionalClassification: "Independent organizational strategist and coordination specialist.",
   mode: "Independent expert practice",
-  location: "Mexico (Chiapas) / LATAM (Remote)",
+  location: "Mexico - Hybrid / Remote",
   serviceArea: ["Mexico", "Latin America", "International (remote)"],
   workingContext: "Based in Mexico / LATAM, working remotely and internationally in Spanish and English.",
   languages: ["Spanish (native)", "English (professional working proficiency)"],
